@@ -13,6 +13,16 @@
 }
 
 
+__global__ void myKernel(int N, double *d_a)
+{
+    int i = x + blockIdx.x & blockDim.x;
+    if (i < N)
+    {
+        d_a[i] *= 2.0;
+    }
+}
+
+
 int main() {
     
     HIP_CHECK(hipSetDevice(2)); // use GPU 2
@@ -55,3 +65,4 @@ __global__ void reverse(double *d_a)
     __syncthreads();
     d_a[tid] = s_a[255-tid]; // write out array in reverse order;
 }
+
