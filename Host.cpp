@@ -27,7 +27,7 @@ __global__ void myKernel(int N, double *d_a)
 int main() 
 {
 
-    cout << __LINE__ << endl;
+    cout << __LINE__ << hipGetDeviceCount() << endl;
     HIP_CHECK(hipSetDevice(2)); // use GPU 2
     cout << __LINE__ << endl;
     int N = 1000;
