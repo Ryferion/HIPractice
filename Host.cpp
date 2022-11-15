@@ -27,7 +27,7 @@ using namespace std;
 int main() 
 {
     int deviceCount = 0, deviceID = 0;
-    // hipSetDevice(2); // use GPU 2x
+    hipSetDevice(2); // use GPU 2
     cout << " line: " << __LINE__ << endl;
     hipGetDevice(&deviceID);
     cout << " line: " << __LINE__ << endl;
