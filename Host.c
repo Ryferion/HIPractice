@@ -49,3 +49,5 @@ int main()
 {
     hipLaunchKernelGGL(reverse, dim3(1), dim3(256), 0, 0, d_a); // launch kernel
 }
+
+#endif
