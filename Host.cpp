@@ -27,11 +27,11 @@ using namespace std;
 int main() 
 {
     int deviceCount = 0, deviceID = 0;
-    hipSetDevice(2); // use GPU 2
-    cout << " line: " << __LINE__ << endl;
-    HIP_CHECK(hipGetDeviceCount(&deviceCount));
+    // hipSetDevice(2); // use GPU 2x
     cout << " line: " << __LINE__ << endl;
     HIP_CHECK(hipGetDevice(&deviceID));
+    cout << " line: " << __LINE__ << endl;
+    HIP_CHECK(hipGetDeviceCount(&deviceCount));
     
     cout << " line: " << __LINE__ << " num devices: " << deviceCount << " current device ID: " << deviceID << endl;
     // cout << __LINE__ << endl;
