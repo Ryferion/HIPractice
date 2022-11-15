@@ -33,7 +33,7 @@ int main()
     cout << " line: " << __LINE__ << endl;
     hipGetDevice(&deviceID);
     cout << " line: " << __LINE__ << endl;
-    hipGetDeviceCount(&deviceCount)
+    hipGetDeviceCount(&deviceCount);
     // HIP_CHECK(hipGetDeviceCount(&deviceCount));
     
     cout << " line: " << __LINE__ << " num devices: " << deviceCount << " current device ID: " << deviceID << endl;
