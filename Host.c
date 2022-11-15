@@ -1,6 +1,9 @@
 #include "hip/hip_runtime.h"
 
-            
+
+
+hipSetDevice(2); // use GPU 2
+
 int main() {
 
     int N = 1000;
