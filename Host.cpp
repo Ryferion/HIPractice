@@ -2,7 +2,7 @@
 #include "hip/hip_runtime.h"
 
 #define __HIP_PLATFORM_HCC__
-#define DEVICE_NUM = 2
+// #define DEVICE_NUM = 2
 
 using namespace std;
 
@@ -28,7 +28,7 @@ int main()
 {
 
     cout << __LINE__ << endl;
-    HIP_CHECK(hipSetDevice(DEVICE_NUM)); // use GPU 2
+    HIP_CHECK(hipSetDevice(2)); // use GPU 2
     cout << __LINE__ << endl;
     int N = 1000;
     size_t Nbytes = N*sizeof(double);
