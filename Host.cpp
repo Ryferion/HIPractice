@@ -1,11 +1,11 @@
 #include "hip/hip_runtime.h"
 
-#ifdef __HIP_PLATFORM_HCC__
+#define __HIP_PLATFORM_HCC__
 
 // can get a corresponding error string by
-#define HIP_CHECK(hipError_t command) {
+#define HIP_CHECK(command) {
     hipError_t status = command;
-    if (status !- hipSuccess)
+    if (status != hipSuccess)
     {
         std::cerr << "Error: HIP reports " << hipGetErrorString(status) << std::endl;
         std::abort();
@@ -55,6 +55,3 @@ __global__ void reverse(double *d_a)
     __syncthreads();
     d_a[tid] = s_a[255-tid]; // write out array in reverse order;
 }
-
-
-#endif
