@@ -25,7 +25,7 @@ using namespace std;
 
 void testFcn(int *something)
 {
-    something = 10;
+    &something = 10;
 }
 int main() 
 {
