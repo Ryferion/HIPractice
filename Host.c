@@ -1,6 +1,6 @@
 #include "hip/hip_runtime.h"
 
-
+#ifdef __HIP_PLATFORM_HCC__
 
 hipSetDevice(2); // use GPU 2
 
@@ -14,7 +14,7 @@ int main() {
     HIP_CHECK(hipMalloc(&d_a, Nbytes)); // allocate Nbytes on device
 
     // copy data from host to device
-    HIP_CHECK(hipMemcpy(d_a, h_a, NBytes, hipMemcpyHostToDevice));
+    HIP_CHECK(hipMemcpy(d_a, h_a, Nbytes, hipMemcpyHostToDevice));
 
     
     dim3 blocks((N + 256 - 1)/256, 1, 1); // 3D dimensions of the grid of blocks
