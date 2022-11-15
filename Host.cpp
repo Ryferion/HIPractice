@@ -3,7 +3,7 @@
 #ifdef __HIP_PLATFORM_HCC__
 
 // can get a corresponding error string by
-#define HIP_CHECK(command) {
+#define HIP_CHECK(hipError_t command) {
     hipError_t status = command;
     if (status !- hipSuccess)
     {
