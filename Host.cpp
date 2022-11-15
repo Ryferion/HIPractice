@@ -13,7 +13,6 @@ using namespace std;
         std::cerr << "Error: HIP reports " << hipGetErrorString(status) << std::endl;   \
         std::abort(); } }
 
-
 // __global__ void myKernel(int N, double *d_a)
 // {
 //     int i = threadIdx.x + blockIdx.x & blockDim.x;
@@ -23,15 +22,18 @@ using namespace std;
 //     }
 // }
 
-
 int main() 
 {
     int deviceCount = -1, deviceID = -1;
 
     // cout << " line: " << __LINE__ << endl;
+    // hipSetDevice(2);
     // HIP_CHECK(hipSetDevice(2)); // use GPU 2
+    
     cout << " line: " << __LINE__ << endl;
     hipGetDevice(&deviceID);
+    // HIP_CHECK(hipGetDevice(&deviceID));
+
     cout << " line: " << __LINE__ << endl;
     hipGetDeviceCount(&deviceCount);
     // HIP_CHECK(hipGetDeviceCount(&deviceCount));

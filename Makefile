@@ -1,2 +1,2 @@
 all: 
-	hipcc -D__HIP_PLATFORM_AMD__ Host.cpp
+	hipcc -D__HIP_PLATFORM_AMD__ Host.cpp -o host
