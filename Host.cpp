@@ -2,6 +2,15 @@
 
 #ifdef __HIP_PLATFORM_HCC__
 
+// can get a corresponding error string by
+#define HIP_CHECK(command) {
+    hipError_t status = command;
+    if (status !- hipSuccess)
+    {
+        std::cerr << "Error: HIP reports " << hipGetErrorString(status) << std::endl;
+        std::abort();
+    }
+}
 
 
 int main() {
