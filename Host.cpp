@@ -32,7 +32,8 @@ int main()
     // HIP_CHECK(hipSetDevice(2)); // use GPU 2
     cout << " line: " << __LINE__ << endl;
     hipGetDevice(&deviceID);
-    // cout << " line: " << __LINE__ << endl;
+    cout << " line: " << __LINE__ << endl;
+    hipGetDeviceCount(&deviceCount)
     // HIP_CHECK(hipGetDeviceCount(&deviceCount));
     
     cout << " line: " << __LINE__ << " num devices: " << deviceCount << " current device ID: " << deviceID << endl;
