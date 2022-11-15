@@ -3,14 +3,11 @@
 #define __HIP_PLATFORM_HCC__
 
 // can get a corresponding error string by
-#define HIP_CHECK(command) {
-    hipError_t status = command;
-    if (status != hipSuccess)
-    {
-        std::cerr << "Error: HIP reports " << hipGetErrorString(status) << std::endl;
-        std::abort();
-    }
-}
+#define HIP_CHECK(command) {        \
+    hipError_t status = command;    \
+    if (status != hipSuccess) {     \
+        std::cerr << "Error: HIP reports " << hipGetErrorString(status) << std::endl;   \
+        std::abort(); } }
 
 
 __global__ void myKernel(int N, double *d_a)
@@ -23,7 +20,8 @@ __global__ void myKernel(int N, double *d_a)
 }
 
 
-int main() {
+int main() 
+{
     
     HIP_CHECK(hipSetDevice(2)); // use GPU 2
     
