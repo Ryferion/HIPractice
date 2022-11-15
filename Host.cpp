@@ -2,10 +2,12 @@
 
 #ifdef __HIP_PLATFORM_HCC__
 
-hipSetDevice(2); // use GPU 2
+
 
 int main() {
-
+    
+    HIP_CHECK(hipSetDevice(2)); // use GPU 2
+    
     int N = 1000;
     size_t Nbytes = N*sizeof(double);
     double *h_a = (double*) malloc(Nbytes); // host memory
@@ -45,9 +47,5 @@ __global__ void reverse(double *d_a)
     d_a[tid] = s_a[255-tid]; // write out array in reverse order;
 }
 
-int main() 
-{
-    hipLaunchKernelGGL(reverse, dim3(1), dim3(256), 0, 0, d_a); // launch kernel
-}
 
 #endif
