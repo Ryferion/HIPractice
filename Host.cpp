@@ -13,14 +13,14 @@ using namespace std;
         std::cerr << "Error: HIP reports " << hipGetErrorString(status) << std::endl;   \
         std::abort(); } }
 
-// __global__ void myKernel(int N, double *d_a)
-// {
-//     int i = threadIdx.x + blockIdx.x & blockDim.x;
-//     if (i < N)
-//     {
-//         d_a[i] *= 2.0;
-//     }
-// }
+__global__ void myKernel(int N, double *d_a)
+{
+    int i = threadIdx.x + blockIdx.x & blockDim.x;
+    if (i < N)
+    {
+        d_a[i] *= 2.0;
+    }
+}
 
 int main() 
 {
@@ -30,39 +30,39 @@ int main()
     // hipSetDevice(2);
     HIP_CHECK(hipSetDevice(2)); // use GPU 2
 
-    cout << " line: " << __LINE__ << endl;
+    // cout << " line: " << __LINE__ << endl;
     // hipGetDevice(&deviceID);
     HIP_CHECK(hipGetDevice(&deviceID));
 
-    cout << " line: " << __LINE__ << endl;
+    // cout << " line: " << __LINE__ << endl;
     // hipGetDeviceCount(&deviceCount);
     HIP_CHECK(hipGetDeviceCount(&deviceCount));
     
-    cout << " line: " << __LINE__ << " num devices: " << deviceCount << " current device ID: " << deviceID << endl;
-    // cout << __LINE__ << endl;
-    // int N = 1000;
-    // size_t Nbytes = N*sizeof(double);
-    // double *h_a = (double*) malloc(Nbytes); // host memory
+    // cout << " line: " << __LINE__ << " num devices: " << deviceCount << " current device ID: " << deviceID << endl;
+    cout << __LINE__ << endl;
+    int N = 1000;
+    size_t Nbytes = N*sizeof(double);
+    double *h_a = (double*) malloc(Nbytes); // host memory
 
-    // double *d_a = NULL;
-    // HIP_CHECK(hipMalloc(&d_a, Nbytes)); // allocate Nbytes on device
+    double *d_a = NULL;
+    HIP_CHECK(hipMalloc(&d_a, Nbytes)); // allocate Nbytes on device
 
-    // // copy data from host to device
-    // HIP_CHECK(hipMemcpy(d_a, h_a, Nbytes, hipMemcpyHostToDevice));
+    // copy data from host to device
+    HIP_CHECK(hipMemcpy(d_a, h_a, Nbytes, hipMemcpyHostToDevice));
 
     
-    // dim3 blocks((N + 256 - 1)/256, 1, 1); // 3D dimensions of the grid of blocks
-    // dim3 threads(256, 1, 1); // 3D dimensions of a block of threads
+    dim3 blocks((N + 256 - 1)/256, 1, 1); // 3D dimensions of the grid of blocks
+    dim3 threads(256, 1, 1); // 3D dimensions of a block of threads
     
-    // hipLaunchKernelGGL(myKernel, blocks, threads, 0, 0, N, d_a);
+    hipLaunchKernelGGL(myKernel, blocks, threads, 0, 0, N, d_a);
 
-    // HIP_CHECK(hipGetLastError());
+    HIP_CHECK(hipGetLastError());
 
-    // // copy data from device to host
-    // HIP_CHECK(hipMemcpy(h_a, d_a, Nbytes, hipMemcpyDeviceToHost)); // host waits for kernel to finish here since hipMemcpy is blocking
+    // copy data from device to host
+    HIP_CHECK(hipMemcpy(h_a, d_a, Nbytes, hipMemcpyDeviceToHost)); // host waits for kernel to finish here since hipMemcpy is blocking
     
-    // free(h_a); // free host memory
-    // HIP_CHECK(hipFree(d_a)); // free device memory
+    free(h_a); // free host memory
+    HIP_CHECK(hipFree(d_a)); // free device memory
 
 }
 
