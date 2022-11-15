@@ -1,6 +1,8 @@
 #include <iostream>
 #include "hip/hip_runtime.h"
+
 #define __HIP_PLATFORM_HCC__
+#define DEVICE_NUM = 2
 
 // can get a corresponding error string by
 #define HIP_CHECK(command) {        \
@@ -23,8 +25,9 @@ __global__ void myKernel(int N, double *d_a)
 int main() 
 {
     
-    HIP_CHECK(hipSetDevice(2)); // use GPU 2
-    
+    std::cout << __LINE__ << endl;
+    HIP_CHECK(hipSetDevice(DEVICE_NUM)); // use GPU 2
+    std::cout << __LINE__ << endl;
     int N = 1000;
     size_t Nbytes = N*sizeof(double);
     double *h_a = (double*) malloc(Nbytes); // host memory
