@@ -1,5 +1,5 @@
+#include <iostream>
 #include "hip/hip_runtime.h"
-
 #define __HIP_PLATFORM_HCC__
 
 // can get a corresponding error string by
@@ -12,7 +12,7 @@
 
 __global__ void myKernel(int N, double *d_a)
 {
-    int i = x + blockIdx.x & blockDim.x;
+    int i = threadIdx.x + blockIdx.x & blockDim.x;
     if (i < N)
     {
         d_a[i] *= 2.0;
