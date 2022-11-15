@@ -27,10 +27,10 @@ __global__ void myKernel(int N, double *d_a)
 int main() 
 {
     int deviceCount = 0, deviceID = 0;
-    hipGetDeviceCount(&deviceCount);
-    hipGetDevice(&deviceID);
+    HIP_CHECK(hipGetDeviceCount(&deviceCount));
+    HIP_CHECK(hipGetDevice(&deviceID));
     
-    cout << __LINE__ << "num devices: " << deviceCount << "current device ID: " << deviceID << endl;
+    cout << " line: " << __LINE__ << " num devices: " << deviceCount << " current device ID: " << deviceID << endl;
     HIP_CHECK(hipSetDevice(2)); // use GPU 2
     cout << __LINE__ << endl;
     int N = 1000;
