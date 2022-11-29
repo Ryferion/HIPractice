@@ -206,8 +206,8 @@ int main(int argc, char **argv)
     HIP_CHECK(hipMemcpy(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost)); // host waits for kernel to finish here since hipMemcpy is blocking
     
     // end timer
+    auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
- 
     cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
  
 
