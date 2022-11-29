@@ -37,13 +37,13 @@ __global__ void matrixMultiply(int row, int col, int out, const float *A, const 
     __shared__ float sharedM1[TILE_SIZE][TILE_SIZE];
     __shared__ float sharedM2[TILE_SIZE][TILE_SIZE];
     
-    register int xThread = threadIdx.x;
-    register int yThread = threadIdx.y;
+    int xThread = threadIdx.x;
+    int yThread = threadIdx.y;
 
-    register int xIdx = xThread + blockIdx.x & blockDim.x;
-    register int yIdx = yThread + blockIdx.y & blockDim.y;
+    int xIdx = xThread + blockIdx.x & blockDim.x;
+    int yIdx = yThread + blockIdx.y & blockDim.y;
     
-    register float temp;
+    float temp;
 
     int i = 0;
     for (i = 0; i < (TILE_SIZE + out - 1) / TILE_SIZE; i++)
