@@ -200,7 +200,7 @@ int main(int argc, char **argv)
     
 
     // write to .tt
-    matrixWrite(row, out, C_host, matrixThree);
+    // matrixWrite(row, out, C_host, matrixThree);
 
     // hipStream_t stream;
     // HIP_CHECK(hipStreamCreate(stream));
