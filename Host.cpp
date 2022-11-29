@@ -16,15 +16,6 @@ using namespace std;
         std::cerr << "Error: HIP reports " << hipGetErrorString(status) << std::endl;   \
         std::abort(); } }
 
-__global__ void myKernel(int N, double *d_a)
-{
-    int i = threadIdx.x + blockIdx.x & blockDim.x;
-    if (i < N)
-    {
-        d_a[i] *= 2.0;
-    }
-}
-
 __global__ void matrixMultiply(int row, int col, int out, const float *A, const float *B, float *C)
 {
     /*
@@ -85,6 +76,25 @@ __global__ void matrixMultiply(int row, int col, int out, const float *A, const 
     }
 }
 
+void matrixWrite(int rowSize, int colSize, float* input, string fileName)
+{
+    fstream outFile;
+    outFile.open(fileName, std::fstream::out | std::fstream::trunc);
+
+    for (int i = 0; i < rowSize; i++)
+    {   
+        for (int j = 0; j < colSize; j++)
+        {
+            outFile << input[i][j];
+            if ((j + 1) != colSize)
+            {
+                outFile << " ";
+            }
+        }
+        outFile << "\n";
+    }
+    outFile.close();
+}
 
 
 void matrixRead(string fileName, float* readTo, int size)
@@ -98,6 +108,7 @@ void matrixRead(string fileName, float* readTo, int size)
         while (outFile >> temp)
         {
             readTo[counter] = stof(temp);
+            cout << readTo[counter] << " ";
             counter++;
         }
     }
@@ -187,6 +198,10 @@ int main(int argc, char **argv)
     // copy matrix data from device to host
     HIP_CHECK(hipMemcpy(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost)); // host waits for kernel to finish here since hipMemcpy is blocking
     
+
+    // write to .tt
+    matrixWrite(row, out, C_host, matrixThree);
+
     // hipStream_t stream;
     // HIP_CHECK(hipStreamCreate(stream));
 
