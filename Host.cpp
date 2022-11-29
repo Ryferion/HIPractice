@@ -31,8 +31,8 @@ __global__ void matrixMultiply(int row, int col, int out, const float *A, const 
     int xThread = threadIdx.x;
     int yThread = threadIdx.y;
 
-    int xIdx = xThread + blockIdx.x & blockDim.x; // current col
-    int yIdx = yThread + blockIdx.y & blockDim.y; // current row
+    int xIdx = xThread + blockIdx.x * blockDim.x; // current col
+    int yIdx = yThread + blockIdx.y * blockDim.y; // current row
     
     float temp = 0;
     
