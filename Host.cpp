@@ -39,24 +39,24 @@ __global__ void matrixMultiply(int row, int col, int out, const float *A, const 
     int i = 0;
     for (i = 0; i < (TILE_SIZE + out - 1) / TILE_SIZE; i++)
     {
-        // int yPos = i * TILE_SIZE + yThread;
-        if ((yIdx < row) && (i * TILE_SIZE + yThread < out))
+        int xPos = i * TILE_SIZE + xThread;
+        if ((yIdx < row) && (xPos < out))
         {
-            sharedM2[yThread][xThread] = B[yIdx * out + i * TILE_SIZE + yThread];
-        }
-        else
-        {
-            sharedM2[yThread][xThread] = 0.0;
-        }
-
-        // int xPos = i * TILE_SIZE + xThread;
-        if ((xIdx < col) && (i * TILE_SIZE + xThread < out))
-        {
-            sharedM1[yThread][xThread] = A[xIdx * out + i * TILE_SIZE + xThread];
+            sharedM1[yThread][xThread] = A[yIdx * out + xPos];
         }
         else
         {
             sharedM1[yThread][xThread] = 0.0;
+        }
+
+        int yPos = i * TILE_SIZE + yThread;
+        if ((xIdx < col) && (yPos < out))
+        {
+            sharedM2[yThread][xThread] = B[xIdx * out + yPos];
+        }
+        else
+        {
+            sharedM2[yThread][xThread] = 0.0;
         }
 
         __syncthreads();
