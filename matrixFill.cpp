@@ -17,21 +17,6 @@ using namespace std;
 
 void matrixWrite(int rowSize, int colSize, vector<vector<float>> input, string fileName)
 {
-
-    // FILE *outFile = fopen(fileName.c_str(), "wb");
-    // for (int i = 0; i < rowSize; i++)
-    // {   
-    //     for (int j = 0; j < colSize; j++)
-    //     {
-    //         char bufferWrite[sizeof(float)];
-    //         sprintf(bufferWrite, "%f ", input[i][j]);
-    //         fputs(bufferWrite, outFile);
-    //     }
-    //     char bufferWrite[sizeof(int)];
-    //     sprintf(bufferWrite, "\n");
-    //     fputs(bufferWrite, outFile);
-    // }
-    // fclose(outFile);
     fstream outFile;
     outFile.open(fileName, std::fstream::out | std::fstream::trunc);
 
@@ -49,6 +34,7 @@ void matrixWrite(int rowSize, int colSize, vector<vector<float>> input, string f
     }
     outFile.close();
 }
+
 
 vector<vector<float>> matrixFill(int rowSize, int colSize, int val)
 {
@@ -130,7 +116,7 @@ int main(int argc, char **argv)
         if (argv[5] != NULL) { matrixThree = argv[5]; } 
         if (argv[6] != NULL) { out = atoi(argv[6]); } 
     }
-    
+
     vector<vector<float>> A;
     vector<vector<float>> B;
     vector<vector<float>> C;
@@ -150,7 +136,7 @@ int main(int argc, char **argv)
     A_host = (float*) malloc( sizeof(float)*A_size);
     B_host = (float*) malloc( sizeof(float)*B_size);
     C_host = (float*) malloc( sizeof(float)*C_size);
-
+    
     // matrixRead(matrixOne, A_host, A_size);
     free(A_host);
     free(B_host);

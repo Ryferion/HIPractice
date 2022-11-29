@@ -76,7 +76,7 @@ __global__ void matrixMultiply(int row, int col, int out, const float *A, const 
     }
 }
 
-void matrixWrite(int rowSize, int colSize, float* input, string fileName)
+void matrixWrite(int rowSize, int colSize, float *input, string fileName)
 {
     fstream outFile;
     outFile.open(fileName, std::fstream::out | std::fstream::trunc);
@@ -85,7 +85,7 @@ void matrixWrite(int rowSize, int colSize, float* input, string fileName)
     {   
         for (int j = 0; j < colSize; j++)
         {
-            outFile << input[i][j];
+            outFile << input[i + i *j];
             if ((j + 1) != colSize)
             {
                 outFile << " ";
@@ -97,7 +97,7 @@ void matrixWrite(int rowSize, int colSize, float* input, string fileName)
 }
 
 
-void matrixRead(string fileName, float* readTo, int size)
+void matrixRead(string fileName, float *readTo, int size)
 {
     // =================================== read in matrix ===================================
     int counter = 0;
