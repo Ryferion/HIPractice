@@ -119,9 +119,9 @@ int main(int argc, char **argv)
     HIP_CHECK(hipGetDevice(&deviceID)); 
     HIP_CHECK(hipGetDeviceCount(&deviceCount)); // how many devices there be (should be 8 on idk)
     
+    cout << " Current Device: " << deviceID << endl;
     if (deviceID != 2)
     {
-        cout << " line: " << __LINE__ << " num devices: " << deviceCount << " current device ID: " << deviceID << endl;
         return 0;
     }
 
