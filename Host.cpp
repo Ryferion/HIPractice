@@ -85,7 +85,7 @@ void matrixWrite(int rowSize, int colSize, float *input, string fileName)
     {   
         for (int j = 0; j < colSize; j++)
         {
-            outFile << input[i + i *j];
+            outFile << input[j + j * i];
             if ((j + 1) != colSize)
             {
                 outFile << " ";
@@ -108,7 +108,6 @@ void matrixRead(string fileName, float *readTo, int size)
         while (outFile >> temp)
         {
             readTo[counter] = stof(temp);
-            cout << readTo[counter] << " ";
             counter++;
         }
     }
