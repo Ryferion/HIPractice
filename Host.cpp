@@ -1,4 +1,6 @@
 #include <iostream>
+#include <fstream>
+
 #include "hip/hip_runtime.h"
 
 #define __HIP_PLATFORM_HCC__
@@ -36,7 +38,7 @@ __global__ void matrixMultiply(int row, int col, int out, const float *A, const 
     __shared__ float sharedM2[TILE_SIZE][TILE_SIZE];
     
     register int xThread = threadIdx.x;
-    register int yThread = threadIdx.y
+    register int yThread = threadIdx.y;
 
     register int xIdx = xThread + blockIdx.x & blockDim.x;
     register int yIdx = yThread + blockIdx.y & blockDim.y;
@@ -167,10 +169,10 @@ int main(int argc, char **argv)
     // copy data from host to device
     HIP_CHECK(hipMemcpy(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice));
     HIP_CHECK(hipMemcpy(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice));
-    
+
     // set up block dim and thread dim
-    dim3 blocks((N + 256 - 1)/256, 1, 1); // 3D dimensions of the grid of blocks
-    dim3 threads(256, 1, 1); // 3D dimensions of a block of threads
+    dim3 blocks(row / TILE_SIZE + 1, col / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
+    dim3 threads(TILE_SIZE, TILE_SIZE, 1); // 3D dimensions of a block of threads
 
     // launch kernel
     hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, 0, row, col, out, A_device, B_device, C_device);
