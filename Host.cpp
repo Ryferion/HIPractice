@@ -39,24 +39,24 @@ __global__ void matrixMultiply(int row, int col, int out, const float *A, const 
     int i = 0;
     for (i = 0; i < (TILE_SIZE + out - 1) / TILE_SIZE; i++)
     {
-        int xPos = i * TILE_SIZE + xThread;
-        if ((xIdx < col) && (xPos < out))
+        // int yPos = i * TILE_SIZE + yThread;
+        if ((yIdx < row) && (i * TILE_SIZE + yThread < out))
         {
-            sharedM1[yThread][xThread] = A[xIdx * out + xPos];
-        }
-        else
-        {
-            sharedM1[yThread][xThread] = 0.0;
-        }
-
-        int yPos = i * TILE_SIZE + yThread;
-        if ((yIdx < row) && (yPos < out))
-        {
-            sharedM2[yThread][xThread] = B[yIdx * out + yPos];
+            sharedM2[yThread][xThread] = B[yIdx * out + i * TILE_SIZE + yThread];
         }
         else
         {
             sharedM2[yThread][xThread] = 0.0;
+        }
+
+        // int xPos = i * TILE_SIZE + xThread;
+        if ((xIdx < col) && (i * TILE_SIZE + xThread < out))
+        {
+            sharedM1[yThread][xThread] = A[xIdx * out + i * TILE_SIZE + xThread];
+        }
+        else
+        {
+            sharedM1[yThread][xThread] = 0.0;
         }
 
         __syncthreads();
@@ -64,7 +64,7 @@ __global__ void matrixMultiply(int row, int col, int out, const float *A, const 
         // combine blocks
         for (int j = 0; j < TILE_SIZE; j++)
         {
-            temp += sharedM1[yThread][i] * sharedM2[i][xThread];
+            temp += sharedM1[yThread][j] * sharedM2[j][xThread];
         }
 
         __syncthreads();
