@@ -5,7 +5,7 @@
 
 #define __HIP_PLATFORM_HCC__
 #define DEVICE_NUM 2
-#define TILE_SIZE 8
+#define TILE_SIZE 16
 
 using namespace std;
 
@@ -44,7 +44,7 @@ __global__ void matrixMultiply(int row, int col, int out, const float *A, const 
     int yIdx = yThread + blockIdx.y & blockDim.y;
     
     float temp;
-    cout << __LINE__ << endl;
+    
     int i = 0;
     for (i = 0; i < (TILE_SIZE + out - 1) / TILE_SIZE; i++)
     {
@@ -177,7 +177,7 @@ int main(int argc, char **argv)
     HIP_CHECK(hipMemcpy(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice));
 
     // set up block dim and thread dim
-    dim3 blocks(row / TILE_SIZE + 1, col / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
+    dim3 blocks(col / TILE_SIZE + 1, row / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
     dim3 threads(TILE_SIZE, TILE_SIZE, 1); // 3D dimensions of a block of threads
 
     // launch kernel
