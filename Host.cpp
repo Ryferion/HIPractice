@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 
+#include <chrono>
+
 #include "hip/hip_runtime.h"
 
 #define __HIP_PLATFORM_HCC__
@@ -177,6 +179,12 @@ int main(int argc, char **argv)
     matrixRead(matrixOne, A_host, A_size);
     matrixRead(matrixTwo, B_host, B_size);
 
+    // start timer: gear it towards hip stuff dont care about the read/write overhead for now
+    auto start = high_resolution_clock::now();
+
+    int timer = sampleTimer->createTimer();
+
+
     // allocate memory for device
     HIP_CHECK(hipMalloc((void**) &A_device, sizeof(float) * A_size));
     HIP_CHECK(hipMalloc((void**) &B_device, sizeof(float) * B_size));
@@ -197,8 +205,13 @@ int main(int argc, char **argv)
     // copy matrix data from device to host
     HIP_CHECK(hipMemcpy(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost)); // host waits for kernel to finish here since hipMemcpy is blocking
     
+    // end timer
+    auto duration = duration_cast<microseconds>(stop - start);
+ 
+    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
+ 
 
-    // write to .tt
+    // write to .txt
     matrixWrite(row, out, C_host, matrixThree);
 
     // hipStream_t stream;
