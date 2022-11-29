@@ -10,6 +10,7 @@
 #define TILE_SIZE 16
 
 using namespace std;
+using namespace std::chrono;
 
 // can get a corresponding error string by
 #define HIP_CHECK(command) {        \
@@ -182,7 +183,6 @@ int main(int argc, char **argv)
     // start timer: gear it towards hip stuff dont care about the read/write overhead for now
     auto start = high_resolution_clock::now();
 
-    int timer = sampleTimer->createTimer();
 
 
     // allocate memory for device
