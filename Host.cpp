@@ -31,8 +31,8 @@ __global__ void matrixMultiply(int row, int col, int out, const float *A, const 
     int xThread = threadIdx.x;
     int yThread = threadIdx.y;
 
-    int xIdx = xThread + blockIdx.x & blockDim.x;
-    int yIdx = yThread + blockIdx.y & blockDim.y;
+    int xIdx = xThread + blockIdx.x & blockDim.x; // current col
+    int yIdx = yThread + blockIdx.y & blockDim.y; // current row
     
     float temp = 0;
     
@@ -52,7 +52,7 @@ __global__ void matrixMultiply(int row, int col, int out, const float *A, const 
         int yPos = i * TILE_SIZE + yThread;
         if ((xIdx < col) && (yPos < out))
         {
-            sharedM2[yThread][xThread] = B[xIdx * out + yPos];
+            sharedM2[yThread][xThread] = B[xIdx * col + yPos];
         }
         else
         {
