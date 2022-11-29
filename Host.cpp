@@ -34,7 +34,7 @@ __global__ void matrixMultiply(int row, int col, int out, const float *A, const 
     int xIdx = xThread + blockIdx.x & blockDim.x;
     int yIdx = yThread + blockIdx.y & blockDim.y;
     
-    float temp;
+    float temp = 0;
     
     int i = 0;
     for (i = 0; i < (TILE_SIZE + out - 1) / TILE_SIZE; i++)
