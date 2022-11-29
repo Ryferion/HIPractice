@@ -50,7 +50,7 @@ __global__ void matrixMultiply(int row, int col, int out, const float *A, const 
         }
 
         int yPos = i * TILE_SIZE + yThread;
-        if ((yIdx < col) && (yPos < out))
+        if ((yIdx < row) && (yPos < out))
         {
             sharedM2[yThread][xThread] = B[yIdx * out + yPos];
         }
