@@ -118,83 +118,88 @@ int main(int argc, char **argv)
     HIP_CHECK(hipSetDevice(DEVICE_NUM)); // use GPU 2
     HIP_CHECK(hipGetDevice(&deviceID)); 
     HIP_CHECK(hipGetDeviceCount(&deviceCount)); // how many devices there be (should be 8 on idk)
-    cout << " line: " << __LINE__ << " num devices: " << deviceCount << " current device ID: " << deviceID << endl;
-
-    // float *A_host, *B_host, *C_host;
-    // float *A_device, *B_device, *C_device;
-    // size_t A_size, B_size, C_size;
-
-    // /*
-    // A = row x col
-    // B = col x out
-    // C = row x out
-    // */
-
-    // int row, col, out;
-    // string matrixOne, matrixTwo, matrixThree;
-    //     row = 8;
-    //     col = 8;
-    //     out = 8;
-    //     matrixOne = "matrix1.txt";
-    //     matrixTwo = "matrix2.txt";
-    //     matrixThree = "matrix3.txt";
-
-    // if (atoi(argv[1]) != 1)
-    // {
-    //     if (argv[1] != NULL) { matrixOne = argv[1]; } 
-    //     if (argv[2] != NULL) { row = atoi(argv[2]); } 
-
-    //     if (argv[3] != NULL) { matrixTwo = argv[3]; } 
-    //     if (argv[4] != NULL) { col = atoi(argv[4]); } 
-
-    //     if (argv[5] != NULL) { matrixThree = argv[5]; } 
-    //     if (argv[6] != NULL) { out = atoi(argv[6]); } 
-    // }
-
-    // A_size = row * col;
-    // B_size = col * out;
-    // C_size = row * out;
-
-    // A_host = (float*) malloc( sizeof(float)*A_size);
-    // B_host = (float*) malloc( sizeof(float)*B_size);
-    // C_host = (float*) malloc( sizeof(float)*C_size);
     
-    // matrixRead(matrixOne, A_host, A_size);
-    // matrixRead(matrixTwo, B_host, B_size);
+    if (deviceID != 2)
+    {
+        cout << " line: " << __LINE__ << " num devices: " << deviceCount << " current device ID: " << deviceID << endl;
+        return 0;
+    }
 
-    // // allocate memory for device
-    // HIP_CHECK(hipMalloc((void**) &A_device, sizeof(float) * A_size));
-    // HIP_CHECK(hipMalloc((void**) &B_device, sizeof(float) * B_size));
-    // HIP_CHECK(hipMalloc((void**) &C_device, sizeof(float) * C_size));
+    float *A_host, *B_host, *C_host;
+    float *A_device, *B_device, *C_device;
+    size_t A_size, B_size, C_size;
+
+    /*
+    A = row x col
+    B = col x out
+    C = row x out
+    */
+
+    int row, col, out;
+    string matrixOne, matrixTwo, matrixThree;
+        row = 8;
+        col = 8;
+        out = 8;
+        matrixOne = "matrix1.txt";
+        matrixTwo = "matrix2.txt";
+        matrixThree = "matrix3.txt";
+
+    if (atoi(argv[1]) != 1)
+    {
+        if (argv[1] != NULL) { matrixOne = argv[1]; } 
+        if (argv[2] != NULL) { row = atoi(argv[2]); } 
+
+        if (argv[3] != NULL) { matrixTwo = argv[3]; } 
+        if (argv[4] != NULL) { col = atoi(argv[4]); } 
+
+        if (argv[5] != NULL) { matrixThree = argv[5]; } 
+        if (argv[6] != NULL) { out = atoi(argv[6]); } 
+    }
+
+    A_size = row * col;
+    B_size = col * out;
+    C_size = row * out;
+
+    A_host = (float*) malloc( sizeof(float)*A_size);
+    B_host = (float*) malloc( sizeof(float)*B_size);
+    C_host = (float*) malloc( sizeof(float)*C_size);
     
-    // // copy data from host to device
-    // HIP_CHECK(hipMemcpy(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice));
-    // HIP_CHECK(hipMemcpy(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice));
+    matrixRead(matrixOne, A_host, A_size);
+    matrixRead(matrixTwo, B_host, B_size);
 
-    // // set up block dim and thread dim
-    // dim3 blocks(row / TILE_SIZE + 1, col / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
-    // dim3 threads(TILE_SIZE, TILE_SIZE, 1); // 3D dimensions of a block of threads
-
-    // // launch kernel
-    // hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, 0, row, col, out, A_device, B_device, C_device);
-    // HIP_CHECK(hipGetLastError());
-
-    // // copy matrix data from device to host
-    // HIP_CHECK(hipMemcpy(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost)); // host waits for kernel to finish here since hipMemcpy is blocking
+    // allocate memory for device
+    HIP_CHECK(hipMalloc((void**) &A_device, sizeof(float) * A_size));
+    HIP_CHECK(hipMalloc((void**) &B_device, sizeof(float) * B_size));
+    HIP_CHECK(hipMalloc((void**) &C_device, sizeof(float) * C_size));
     
-    // // hipStream_t stream;
-    // // HIP_CHECK(hipStreamCreate(stream));
+    // copy data from host to device
+    HIP_CHECK(hipMemcpy(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice));
+    HIP_CHECK(hipMemcpy(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice));
 
-    // // const uint32_t CUMask = 0xffffffff;
-    // // const uint32_t CUMask_size = 1;
-    // // HIP_CHECK(hipExtStreamCreateWithCUMask(stream, CUMask_size, CUMask))
+    // set up block dim and thread dim
+    dim3 blocks(row / TILE_SIZE + 1, col / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
+    dim3 threads(TILE_SIZE, TILE_SIZE, 1); // 3D dimensions of a block of threads
 
-    // free(A_host); // free host memory
-    // HIP_CHECK(hipFree(A_device)); // free device memory
-    // free(B_host); // free host memory
-    // HIP_CHECK(hipFree(B_device)); // free device memory
-    // free(C_host); // free host memory
-    // HIP_CHECK(hipFree(C_device)); // free device memory
+    // launch kernel
+    hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, 0, row, col, out, A_device, B_device, C_device);
+    HIP_CHECK(hipGetLastError());
+
+    // copy matrix data from device to host
+    HIP_CHECK(hipMemcpy(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost)); // host waits for kernel to finish here since hipMemcpy is blocking
+    
+    // hipStream_t stream;
+    // HIP_CHECK(hipStreamCreate(stream));
+
+    // const uint32_t CUMask = 0xffffffff;
+    // const uint32_t CUMask_size = 1;
+    // HIP_CHECK(hipExtStreamCreateWithCUMask(stream, CUMask_size, CUMask))
+
+    free(A_host); // free host memory
+    HIP_CHECK(hipFree(A_device)); // free device memory
+    free(B_host); // free host memory
+    HIP_CHECK(hipFree(B_device)); // free device memory
+    free(C_host); // free host memory
+    HIP_CHECK(hipFree(C_device)); // free device memory
 
     return 0;
 }
