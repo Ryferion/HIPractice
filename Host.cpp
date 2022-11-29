@@ -116,7 +116,7 @@ int main(int argc, char **argv)
     int deviceCount = -1, deviceID = -1;
 
     HIP_CHECK(hipSetDevice(DEVICE_NUM)); // use GPU 2
-    HIP_CHECK(hipGetDevice(%deviceID)); // use GPU 2
+    HIP_CHECK(hipGetDevice(&deviceID)); 
     HIP_CHECK(hipGetDeviceCount(&deviceCount)); // how many devices there be (should be 8 on idk)
     cout << " line: " << __LINE__ << " num devices: " << deviceCount << " current device ID: " << deviceID << endl;
 
