@@ -158,14 +158,6 @@ int main(int argc, char **argv)
 
     if (atoi(argv[1]) != 1)
     {
-        // if (argv[1] != NULL) { matrixOne = argv[1]; } 
-        // if (argv[2] != NULL) { row = atoi(argv[2]); } 
-
-        // if (argv[3] != NULL) { matrixTwo = argv[3]; } 
-        // if (argv[4] != NULL) { col = atoi(argv[4]); } 
-        
-        // if (argv[5] != NULL) { matrixThree = argv[5]; } 
-        // if (argv[6] != NULL) { out = atoi(argv[6]); } 
         row = atoi(argv[1]);
         col = row;
         out = col;
@@ -191,7 +183,7 @@ int main(int argc, char **argv)
     
     const uint32_t CUMask = 0xffffffff;
     const uint32_t CUMask_size = 1;
-    HIP_CHECK(hipExtStreamCreateWithCUMask(&stream1, CUMask_size, CUMask));
+    HIP_CHECK(hipExtStreamCreateWithCUMask(&stream1, CUMask_size, &CUMask));
 
     hipStream_t stream2;
     HIP_CHECK(hipStreamCreate(&stream2));
