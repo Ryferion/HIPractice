@@ -191,14 +191,12 @@ int main(int argc, char **argv)
     
     const uint32_t CUMask = 0xffffffff;
     const uint32_t CUMask_size = 1;
-    HIP_CHECK(hipExtStreamCreateWithCUMask(*stream1, CUMask_size, CUMask));
+    HIP_CHECK(hipExtStreamCreateWithCUMask(&stream1, CUMask_size, CUMask));
 
     hipStream_t stream2;
-    HIP_CHECK(hipStreamCreate(*stream2));
+    HIP_CHECK(hipStreamCreate(&stream2));
     hipStream_t stream3;
-    HIP_CHECK(hipStreamCreate(*stream3));
-
-
+    HIP_CHECK(hipStreamCreate(&stream3));
 
 
     // allocate memory for device
