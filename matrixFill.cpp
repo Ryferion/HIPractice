@@ -55,7 +55,7 @@ vector<vector<float>> matrixFill(int rowSize, int colSize, int val)
             }
             else
             {
-                randomVal = std::rand() % 9;
+                randomVal = std::rand() % 9 / std::rand() * 19;
             }
             tempVec.push_back(randomVal);
         }
