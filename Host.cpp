@@ -191,12 +191,12 @@ int main(int argc, char **argv)
     
     const uint32_t CUMask = 0xffffffff;
     const uint32_t CUMask_size = 1;
-    HIP_CHECK(hipExtStreamCreateWithCUMask(stream1, CUMask_size, CUMask));
+    HIP_CHECK(hipExtStreamCreateWithCUMask(*stream1, CUMask_size, CUMask));
 
     hipStream_t stream2;
-    HIP_CHECK(hipStreamCreate(stream2));
+    HIP_CHECK(hipStreamCreate(*stream2));
     hipStream_t stream3;
-    HIP_CHECK(hipStreamCreate(stream3));
+    HIP_CHECK(hipStreamCreate(*stream3));
 
 
 
@@ -239,8 +239,8 @@ int main(int argc, char **argv)
     HIP_CHECK(hipFree(C_device)); // free device memory
 
     // destroy stream
-    HIP_CHECK(hipStreamDestroy(stream1));
-    HIP_CHECK(hipStreamDestroy(stream2));
-    HIP_CHECK(hipStreamDestroy(stream3));
+    HIP_CHECK(hipStreamDestroy(*stream1));
+    HIP_CHECK(hipStreamDestroy(*stream2));
+    HIP_CHECK(hipStreamDestroy(*stream3));
     return 0;
 }
