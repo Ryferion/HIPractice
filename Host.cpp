@@ -239,8 +239,8 @@ int main(int argc, char **argv)
     HIP_CHECK(hipFree(C_device)); // free device memory
 
     // destroy stream
-    HIP_CHECK(hipStreamDestroy(*stream1));
-    HIP_CHECK(hipStreamDestroy(*stream2));
-    HIP_CHECK(hipStreamDestroy(*stream3));
+    HIP_CHECK(hipStreamDestroy(stream1));
+    HIP_CHECK(hipStreamDestroy(stream2));
+    HIP_CHECK(hipStreamDestroy(stream3));
     return 0;
 }
