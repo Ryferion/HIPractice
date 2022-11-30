@@ -24,7 +24,8 @@ void matrixWrite(int rowSize, int colSize, vector<vector<float>> input, string f
     {   
         for (int j = 0; j < colSize; j++)
         {
-            outFile << input[i][j];
+            // cout << input[i][j];
+            outFile << std::to_string(input[i][j]);
             if ((j + 1) != colSize)
             {
                 outFile << " ";
@@ -46,11 +47,15 @@ vector<vector<float>> matrixFill(int rowSize, int colSize, int val)
         vector<float> tempVec;
         for (int j = 0; j < colSize; j++)
         {
-            float randomVal;
-            randomVal = std::rand() % 9;
+            float randomVal = 0;
+            
             if (val != 1337)
             {
                 randomVal = val;
+            }
+            else
+            {
+                randomVal = std::rand() % 9;
             }
             tempVec.push_back(randomVal);
         }
@@ -107,22 +112,25 @@ int main(int argc, char **argv)
 
     if (atoi(argv[1]) != 1)
     {
-        if (argv[1] != NULL) { matrixOne = argv[1]; } 
-        if (argv[2] != NULL) { row = atoi(argv[2]); } 
+        // if (argv[1] != NULL) { matrixOne = argv[1]; } 
+        // if (argv[2] != NULL) { row = atoi(argv[2]); } 
 
-        if (argv[3] != NULL) { matrixTwo = argv[3]; } 
-        if (argv[4] != NULL) { col = atoi(argv[4]); } 
+        // if (argv[3] != NULL) { matrixTwo = argv[3]; } 
+        // if (argv[4] != NULL) { col = atoi(argv[4]); } 
         
-        if (argv[5] != NULL) { matrixThree = argv[5]; } 
-        if (argv[6] != NULL) { out = atoi(argv[6]); } 
+        // if (argv[5] != NULL) { matrixThree = argv[5]; } 
+        // if (argv[6] != NULL) { out = atoi(argv[6]); } 
+        row = atoi(argv[1]);
+        col = row;
+        out = col;
     }
 
     vector<vector<float>> A;
     vector<vector<float>> B;
     vector<vector<float>> C;
 
-    A = matrixFill(row, col, 1);
-    B = matrixFill(col, out, 2);
+    A = matrixFill(row, col, 1337);
+    B = matrixFill(col, out, 1337);
     C = matrixFill(row, out, 0);
     
     matrixWrite(row, col, A, matrixOne);
