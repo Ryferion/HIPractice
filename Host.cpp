@@ -159,14 +159,17 @@ int main(int argc, char **argv)
 
     if (atoi(argv[1]) != 1)
     {
-        if (argv[1] != NULL) { matrixOne = argv[1]; } 
-        if (argv[2] != NULL) { row = atoi(argv[2]); } 
+        // if (argv[1] != NULL) { matrixOne = argv[1]; } 
+        // if (argv[2] != NULL) { row = atoi(argv[2]); } 
 
-        if (argv[3] != NULL) { matrixTwo = argv[3]; } 
-        if (argv[4] != NULL) { col = atoi(argv[4]); } 
-
-        if (argv[5] != NULL) { matrixThree = argv[5]; } 
-        if (argv[6] != NULL) { out = atoi(argv[6]); } 
+        // if (argv[3] != NULL) { matrixTwo = argv[3]; } 
+        // if (argv[4] != NULL) { col = atoi(argv[4]); } 
+        
+        // if (argv[5] != NULL) { matrixThree = argv[5]; } 
+        // if (argv[6] != NULL) { out = atoi(argv[6]); } 
+        row = atoi(argv[1]);
+        col = row;
+        out = col;
     }
 
     A_size = row * col;
@@ -190,7 +193,7 @@ int main(int argc, char **argv)
     HIP_CHECK(hipMalloc((void**) &B_device, sizeof(float) * B_size));
     HIP_CHECK(hipMalloc((void**) &C_device, sizeof(float) * C_size));
     
-    // copy data from host to device
+    // copy data from host to device 
     HIP_CHECK(hipMemcpy(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice));
     HIP_CHECK(hipMemcpy(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice));
 
@@ -209,7 +212,7 @@ int main(int argc, char **argv)
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
     cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
- 
+
 
     // write to .txt
     matrixWrite(row, out, C_host, matrixThree);
