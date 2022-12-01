@@ -219,7 +219,7 @@ int main(int argc, char **argv)
         HIP_CHECK(hipGetLastError());
 
         // copy matrix data from device to host
-        HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, stream3)); // host waits for kernel to finish here since hipMemcpy is blocking
+        HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMax)); // host waits for kernel to finish here since hipMemcpy is blocking
 
         A_host = C_host;
     }
