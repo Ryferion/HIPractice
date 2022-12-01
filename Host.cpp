@@ -147,7 +147,7 @@ int main(int argc, char **argv)
     C = row x out
     */
 
-    int iterations;
+    int iterations = 1;
     int row, col, out;
     string matrixOne, matrixTwo, matrixThree;
         row = 8;
