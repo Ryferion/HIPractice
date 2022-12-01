@@ -170,19 +170,17 @@ int main(int argc, char **argv)
 
     // streams
     hipStream_t streamMin;
-    const uint32_t CUMask = 0x0000000f;
+    const uint32_t CUMaskMin = 0x0000000f;
     const uint32_t CUMask_size = 1;
-    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMin, CUMask_size, &CUMask));
+    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMin, CUMask_size, &CUMaskMin));
 
     hipStream_t streamHalf;
-    const uint32_t CUMask = 0x0000ffff;
-    const uint32_t CUMask_size = 1;
-    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamHalf, CUMask_size, &CUMask));
+    const uint32_t CUMaskHalf = 0x0000ffff;
+    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamHalf, CUMask_size, &CUMaskHalf));
 
     hipStream_t streamMax;
-    const uint32_t CUMask = 0xffffffff;
-    const uint32_t CUMask_size = 1;
-    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMax, CUMask_size, &CUMask));
+    const uint32_t CUMaskMax = 0xffffffff;
+    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMax, CUMask_size, &CUMaskMax));
 
 
 
