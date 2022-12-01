@@ -129,8 +129,8 @@ int main(int argc, char **argv)
     vector<vector<float>> B;
     vector<vector<float>> C;
 
-    A = matrixFill(row, col, 1337);
-    B = matrixFill(col, out, 1337);
+    A = matrixFill(row, col, 1);
+    B = matrixFill(col, out, 2);
     C = matrixFill(row, out, 0);
     
     matrixWrite(row, col, A, matrixOne);
