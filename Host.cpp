@@ -254,7 +254,7 @@ int main(int argc, char **argv)
     for (int i = 0; i < iterations; i++)
     {
         // matrix multiplication
-        
+
         // allocate memory for device
         HIP_CHECK(hipMalloc((void**) &A_device, sizeof(float) * A_size));
         HIP_CHECK(hipMalloc((void**) &B_device, sizeof(float) * B_size));
@@ -287,7 +287,7 @@ int main(int argc, char **argv)
         HIP_CHECK(hipGetLastError());
 
         // copy matrix data from device to host
-        HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMax)); // host waits for kernel to finish here since hipMemcpy is blocking
+        HIP_CHECK(hipMemcpyAsync(A_host, A_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMax)); // host waits for kernel to finish here since hipMemcpy is blocking
 
     }
 
