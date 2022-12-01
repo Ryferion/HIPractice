@@ -79,6 +79,60 @@ __global__ void matrixMultiply(int row, int col, int out, const float *A, const 
     }
 }
 
+__global__ void matrixAdd(int row, int col, int out, float *A, float *B)
+{
+
+    __shared__ float sharedM1[TILE_SIZE][TILE_SIZE];
+    __shared__ float sharedM2[TILE_SIZE][TILE_SIZE];
+    
+    int xThread = threadIdx.x;
+    int yThread = threadIdx.y;
+
+    int xIdx = xThread + blockIdx.x * blockDim.x; // current col
+    int yIdx = yThread + blockIdx.y * blockDim.y; // current row
+    
+    float temp = 0;
+    
+    int i = 0;
+    for (i = 0; i < out; i++)
+    {
+        int xPos = i * TILE_SIZE + xThread;
+        if ((yIdx < row) && (xPos < out))
+        {
+            sharedM1[yThread][xThread] = A[yIdx * out + xPos];
+        }
+        else
+        {
+            sharedM1[yThread][xThread] = 0.0;
+        }
+
+        int yPos = i * TILE_SIZE + yThread;
+        if ((xIdx < col) && (yPos < out))
+        {
+            sharedM2[yThread][xThread] = B[xIdx * col + yPos];
+        }
+        else
+        {
+            sharedM2[yThread][xThread] = 0.0;
+        }
+
+        __syncthreads();
+
+        // combine blocks
+        for (int j = 0; j < TILE_SIZE; j++)
+        {
+            temp += sharedM1[yThread][j] + sharedM2[j][xThread];
+        }
+
+        __syncthreads();
+
+        if ((yIdx < row) && (xIdx < col))
+        {
+            B[yIdx * col + xIdx] = temp;
+        }
+    }
+}
+
 void matrixWrite(int rowSize, int colSize, float *input, string fileName)
 {
     fstream outFile;
@@ -182,7 +236,16 @@ int main(int argc, char **argv)
     const uint32_t CUMaskMax = 0xffffffff;
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMax, CUMask_size, &CUMaskMax));
 
+    A_size = row * col;
+    B_size = col * out;
+    C_size = row * out;
 
+    A_host = (float*) malloc( sizeof(float)*A_size);
+    B_host = (float*) malloc( sizeof(float)*B_size);
+    C_host = (float*) malloc( sizeof(float)*C_size);
+    
+    matrixRead(matrixOne, A_host, A_size);
+    matrixRead(matrixTwo, B_host, B_size);
 
     // start timer: gear it towards hip stuff dont care about the read/write overhead for now
     auto start = high_resolution_clock::now();
@@ -190,17 +253,8 @@ int main(int argc, char **argv)
 
     for (int i = 0; i < iterations; i++)
     {
-        A_size = row * col;
-        B_size = col * out;
-        C_size = row * out;
-
-        A_host = (float*) malloc( sizeof(float)*A_size);
-        B_host = (float*) malloc( sizeof(float)*B_size);
-        C_host = (float*) malloc( sizeof(float)*C_size);
+        // matrix multiplication
         
-        matrixRead(matrixOne, A_host, A_size);
-        matrixRead(matrixTwo, B_host, B_size);
-
         // allocate memory for device
         HIP_CHECK(hipMalloc((void**) &A_device, sizeof(float) * A_size));
         HIP_CHECK(hipMalloc((void**) &B_device, sizeof(float) * B_size));
@@ -221,7 +275,20 @@ int main(int argc, char **argv)
         // copy matrix data from device to host
         HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMax)); // host waits for kernel to finish here since hipMemcpy is blocking
 
-        // A_host = C_host;
+
+        // addition
+
+        // copy data from host to device 
+        HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMax));
+        HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMax));
+
+        // launch kernel
+        hipLaunchKernelGGL(matrixAdd, blocks, threads, 0, streamMax, row, col, out, C_device, A_device);
+        HIP_CHECK(hipGetLastError());
+
+        // copy matrix data from device to host
+        HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMax)); // host waits for kernel to finish here since hipMemcpy is blocking
+
     }
 
     // END LOOP
