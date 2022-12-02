@@ -87,49 +87,29 @@ __global__ void matrixAdd(int row, int col, int out, float *A, float *B)
     
     int xThread = threadIdx.x;
     int yThread = threadIdx.y;
-
     int xIdx = xThread + blockIdx.x * blockDim.x; // current col
     int yIdx = yThread + blockIdx.y * blockDim.y; // current row
     
     float temp = 0;
-    
     int i = 0;
     for (i = 0; i < out; i++)
     {
         int xPos = i * TILE_SIZE + xThread;
-        if ((yIdx < row) && (xPos < out))
-        {
-            sharedM1[yThread][xThread] = A[yIdx * out + xPos];
-        }
-        else
-        {
-            sharedM1[yThread][xThread] = 0.0;
-        }
+        if ((yIdx < row) && (xPos < out)) { sharedM1[yThread][xThread] = A[yIdx * out + xPos]; }
+        else { sharedM1[yThread][xThread] = 0.0; }
 
         int yPos = i * TILE_SIZE + yThread;
-        if ((xIdx < col) && (yPos < out))
-        {
-            sharedM2[yThread][xThread] = B[xIdx * col + yPos];
-        }
-        else
-        {
-            sharedM2[yThread][xThread] = 0.0;
-        }
+        if ((xIdx < col) && (yPos < out)) { sharedM2[yThread][xThread] = B[xIdx * col + yPos]; }
+        else { sharedM2[yThread][xThread] = 0.0; }
 
         __syncthreads();
 
         // combine blocks
-        for (int j = 0; j < TILE_SIZE; j++)
-        {
-            temp += sharedM1[yThread][j] + sharedM2[j][xThread];
-        }
+        for (int j = 0; j < TILE_SIZE; j++) { temp += sharedM1[yThread][j] + sharedM2[j][xThread]; }
 
         __syncthreads();
 
-        if ((yIdx < row) && (xIdx < col))
-        {
-            B[yIdx * col + xIdx] = temp;
-        }
+        if ((yIdx < row) && (xIdx < col)) { B[yIdx * col + xIdx] = temp; }
     }
 }
 
@@ -254,6 +234,8 @@ int main(int argc, char **argv)
     for (int i = 0; i < iterations; i++)
     {
         // matrix multiplication
+
+
 
         // allocate memory for device
         HIP_CHECK(hipMalloc((void**) &A_device, sizeof(float) * A_size));

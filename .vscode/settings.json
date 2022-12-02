@@ -45,6 +45,8 @@
         "xutility": "cpp",
         "fstream": "cpp",
         "algorithm": "cpp",
-        "random": "cpp"
+        "random": "cpp",
+        "chrono": "cpp",
+        "format": "cpp"
     }
 }
