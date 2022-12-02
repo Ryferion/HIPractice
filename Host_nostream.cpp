@@ -277,7 +277,7 @@ int main(int argc, char **argv)
         HIP_CHECK(hipMemcpy(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice));
 
         // launch kernel
-        hipLaunchKernelGGL(matrixAdd, blocks, threads, 0, row, col, out, C_device, A_device);
+        hipLaunchKernelGGL(matrixAdd, blocks, threads, 0, 0, row, col, out, C_device, A_device);
         HIP_CHECK(hipGetLastError());
 
         // copy matrix data from device to host
