@@ -204,7 +204,7 @@ int main(int argc, char **argv)
 
     // streams
     cout << endl;
-    
+
     hipStream_t streamMin;
     hipStream_t streamHalf;
     hipStream_t streamMax;
@@ -231,12 +231,14 @@ int main(int argc, char **argv)
     matrixRead(matrixOne, A_host, A_size);
     matrixRead(matrixTwo, B_host, B_size);
 
-    // start timer: gear it towards hip stuff dont care about the read/write overhead for now
-    auto start = high_resolution_clock::now();
+
     // BEGIN LOOP
 
     for (int i = 0; i < iterations; i++)
     {
+        // start timer: gear it towards hip stuff dont care about the read/write overhead for now
+        auto start = high_resolution_clock::now();
+        
         // matrix multiplication
 
         // allocate memory for device
@@ -289,14 +291,14 @@ int main(int argc, char **argv)
 
         
         HIP_CHECK(hipStreamDestroy(streamMain));
+
+        // end timer
+        auto stop = high_resolution_clock::now();
+        auto duration = duration_cast<microseconds>(stop - start);
+        cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
     }
 
     // END LOOP
-    // end timer
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
-
 
     // write to .txt
     matrixWrite(row, out, C_host, matrixThree);
