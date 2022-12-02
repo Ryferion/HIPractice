@@ -260,7 +260,7 @@ int main(int argc, char **argv)
         dim3 threads(TILE_SIZE, TILE_SIZE, 1); // 3D dimensions of a block of threads
 
         // launch kernel
-        hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, row, col, out, A_device, B_device, C_device);
+        hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, 0, row, col, out, A_device, B_device, C_device);
         // hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMain, row, col, out, A_device, B_device, C_device);
         // hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMain, row, col, out, A_device, B_device, C_device);
 
