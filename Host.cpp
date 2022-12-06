@@ -226,9 +226,9 @@ int main(int argc, char **argv)
     B_size = col * out;
     C_size = row * out;
 
-    A_host = (float*) malloc( sizeof(float)*A_size);
-    B_host = (float*) malloc( sizeof(float)*B_size);
-    C_host = (float*) malloc( sizeof(float)*C_size);
+    // A_host = (float*) malloc( sizeof(float)*A_size);
+    // B_host = (float*) malloc( sizeof(float)*B_size);
+    // C_host = (float*) malloc( sizeof(float)*C_size);
 
     HIP_CHECK(hipHostMalloc((void**) &A_host, sizeof(float) * A_size));
     HIP_CHECK(hipHostMalloc((void**) &B_host, sizeof(float) * B_size));
@@ -334,15 +334,15 @@ int main(int argc, char **argv)
     // write to .txt
     matrixWrite(row, out, C_host, matrixThree);
 
-    free(A_host); // free host memory
+    // free(A_host); // free host memory
     HIP_CHECK(hipFree(A_device)); // free device memory
     HIP_CHECK(hipHostFree(A_host)); // free pinned memory
 
-    free(B_host); // free host memory
+    // free(B_host); // free host memory
     HIP_CHECK(hipFree(B_device)); // free device memory
     HIP_CHECK(hipHostFree(B_host)); // free pinned memory
     
-    free(C_host); // free host memory
+    // free(C_host); // free host memory
     HIP_CHECK(hipFree(C_device)); // free device memory
     HIP_CHECK(hipHostFree(C_host)); // free pinned memory
     
