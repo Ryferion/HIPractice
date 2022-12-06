@@ -229,6 +229,11 @@ int main(int argc, char **argv)
     C_host = (float*) malloc( sizeof(float)*C_size);
 
 
+    HIP_CHECK(hipHostMalloc((void**) &A_host, sizeof(float) * A_size));
+    HIP_CHECK(hipHostMalloc((void**) &B_host, sizeof(float) * B_size));
+    HIP_CHECK(hipHostMalloc((void**) &C_host, sizeof(float) * C_size));
+
+
     matrixRead(matrixOne, A_host, A_size);
     matrixRead(matrixTwo, B_host, B_size);
 
@@ -247,9 +252,7 @@ int main(int argc, char **argv)
         HIP_CHECK(hipMalloc((void**) &B_device, sizeof(float) * B_size));
         HIP_CHECK(hipMalloc((void**) &C_device, sizeof(float) * C_size));
         
-        // HIP_CHECK(hipHostMalloc((void**) &A_device, sizeof(float) * A_size));
-        // HIP_CHECK(hipHostMalloc((void**) &B_device, sizeof(float) * B_size));
-        // HIP_CHECK(hipHostMalloc((void**) &C_device, sizeof(float) * C_size));
+
 
         // copy data from host to device using stream...
         if (i == 0) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMain, CUMask_size, &CUMaskMin)); }
