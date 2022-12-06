@@ -226,13 +226,13 @@ int main(int argc, char **argv)
     B_size = col * out;
     C_size = row * out;
 
-    // A_host = (float*) malloc( sizeof(float)*A_size);
-    // B_host = (float*) malloc( sizeof(float)*B_size);
-    // C_host = (float*) malloc( sizeof(float)*C_size);
+    A_host = (float*) malloc( sizeof(float)*A_size);
+    B_host = (float*) malloc( sizeof(float)*B_size);
+    C_host = (float*) malloc( sizeof(float)*C_size);
 
-    HIP_CHECK(hipHostMalloc((void**) &A_host, sizeof(float) * A_size));
-    HIP_CHECK(hipHostMalloc((void**) &B_host, sizeof(float) * B_size));
-    HIP_CHECK(hipHostMalloc((void**) &C_host, sizeof(float) * C_size));
+    // HIP_CHECK(hipHostMalloc((void**) &A_host, sizeof(float) * A_size));
+    // HIP_CHECK(hipHostMalloc((void**) &B_host, sizeof(float) * B_size));
+    // HIP_CHECK(hipHostMalloc((void**) &C_host, sizeof(float) * C_size));
 
     // double* A_host_pin = NULL;
     // double* B_host_pin = NULL;
@@ -264,8 +264,8 @@ int main(int argc, char **argv)
         // copy data from host to device using stream...
         if (i == 0) 
         { 
-            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, &CUMaskMax)); 
-            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, &CUMaskMax)); 
+            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, &CUMaskMin)); 
+            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, &CUMaskMin)); 
         }
         if (i == 1) 
         { 
@@ -274,8 +274,8 @@ int main(int argc, char **argv)
         }
         if (i == 2) 
         { 
-            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, &CUMaskMin)); 
-            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, &CUMaskMin)); 
+            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, &CUMaskMax)); 
+            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, &CUMaskMax)); 
         }
     
         HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));
@@ -299,9 +299,9 @@ int main(int argc, char **argv)
 
         // addition
 
-        if (i == 0) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamAdd, CUMask_size, &CUMaskMax)); }
+        if (i == 0) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamAdd, CUMask_size, &CUMaskMin)); }
         if (i == 1) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamAdd, CUMask_size, &CUMaskHalf)); }
-        if (i == 2) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamAdd, CUMask_size, &CUMaskMin)); }
+        if (i == 2) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamAdd, CUMask_size, &CUMaskMax)); }
 
         // copy data from host to device 
         HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));
@@ -335,19 +335,18 @@ int main(int argc, char **argv)
     // write to .txt
     matrixWrite(row, out, C_host, matrixThree);
 
-    // free(A_host); // free host memory
-    // HIP_CHECK(hipFree(A_device)); // free device memory
+    free(A_host); // free host memory
+    free(B_host); // free host memory
+    free(C_host); // free host memory
 
-    // free(B_host); // free host memory
-    // HIP_CHECK(hipFree(B_device)); // free device memory
-    
-    // free(C_host); // free host memory
+    // HIP_CHECK(hipFree(A_device)); // free device memory
+    // HIP_CHECK(hipFree(B_device)); // free device memory    
     // HIP_CHECK(hipFree(C_device)); // free device memory
 
-    
-    HIP_CHECK(hipHostFree(A_host)); // free pinned memory
-    HIP_CHECK(hipHostFree(B_host)); // free pinned memory
-    HIP_CHECK(hipHostFree(C_host)); // free pinned memory
+
+    // HIP_CHECK(hipHostFree(A_host)); // free pinned memory
+    // HIP_CHECK(hipHostFree(B_host)); // free pinned memory
+    // HIP_CHECK(hipHostFree(C_host)); // free pinned memory
     
 
     HIP_CHECK(hipStreamDestroy(streamMin));
