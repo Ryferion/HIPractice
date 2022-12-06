@@ -217,7 +217,7 @@ int main(int argc, char **argv)
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMin, CUMask_size, &CUMaskMin));
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamHalf, CUMask_size, &CUMaskHalf));
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMax, CUMask_size, &CUMaskMax));
-
+    
     hipStream_t streamAdd;
     hipStream_t streamMultiply;
     hipStream_t streamMemory;
@@ -295,7 +295,7 @@ int main(int argc, char **argv)
 
         // HIP_CHECK(hipStreamSynchronize(streamMultiply));
         HIP_CHECK(hipStreamSynchronize(streamMemory));
-// 
+
 
         // addition
 
@@ -308,17 +308,21 @@ int main(int argc, char **argv)
         HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMemory));
 
         // launch kernel
-        hipLaunchKernelGGL(matrixAdd, blocks, threads, 0, streamAdd, row, col, out, C_device, A_device);
+        // hipLaunchKernelGGL(matrixAdd, blocks, threads, 0, streamAdd, row, col, out, C_device, A_device);
         HIP_CHECK(hipGetLastError());
 
         // copy matrix data from device to host
-        HIP_CHECK(hipMemcpyAsync(A_host, A_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
+        HIP_CHECK(hipMemcpyAsync(A_host, A_device, sizeof(float) * A_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
         
         // HIP_CHECK(hipStreamSynchronize(streamAdd));
         // HIP_CHECK(hipStreamSynchronize(streamMemory));
 
         HIP_CHECK(hipStreamDestroy(streamMultiply));
         HIP_CHECK(hipStreamDestroy(streamMemory));
+
+        HIP_CHECK(hipFree(A_device)); // free device memory
+        HIP_CHECK(hipFree(B_device)); // free device memory
+        HIP_CHECK(hipFree(C_device)); // free device memory
 
         // end timer
         auto stop = high_resolution_clock::now();
@@ -332,15 +336,17 @@ int main(int argc, char **argv)
     matrixWrite(row, out, C_host, matrixThree);
 
     // free(A_host); // free host memory
-    HIP_CHECK(hipFree(A_device)); // free device memory
-    HIP_CHECK(hipHostFree(A_host)); // free pinned memory
+    // HIP_CHECK(hipFree(A_device)); // free device memory
 
     // free(B_host); // free host memory
-    HIP_CHECK(hipFree(B_device)); // free device memory
-    HIP_CHECK(hipHostFree(B_host)); // free pinned memory
+    // HIP_CHECK(hipFree(B_device)); // free device memory
     
     // free(C_host); // free host memory
-    HIP_CHECK(hipFree(C_device)); // free device memory
+    // HIP_CHECK(hipFree(C_device)); // free device memory
+
+    
+    HIP_CHECK(hipHostFree(A_host)); // free pinned memory
+    HIP_CHECK(hipHostFree(B_host)); // free pinned memory
     HIP_CHECK(hipHostFree(C_host)); // free pinned memory
     
 
