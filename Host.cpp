@@ -228,7 +228,9 @@ int main(int argc, char **argv)
     B_host = (float*) malloc( sizeof(float)*B_size);
     C_host = (float*) malloc( sizeof(float)*C_size);
 
-    double A_host_pin, B_host_pin, C_host_pin;
+    double* A_host_pin = NULL;
+    double* B_host_pin = NULL;
+    double* C_host_pin = NULL;
     HIP_CHECK(hipHostMalloc((void**) &A_host_pin, sizeof(float) * A_size));
     HIP_CHECK(hipHostMalloc((void**) &B_host_pin, sizeof(float) * B_size));
     HIP_CHECK(hipHostMalloc((void**) &C_host_pin, sizeof(float) * C_size));
