@@ -227,7 +227,8 @@ int main(int argc, char **argv)
     A_host = (float*) malloc( sizeof(float)*A_size);
     B_host = (float*) malloc( sizeof(float)*B_size);
     C_host = (float*) malloc( sizeof(float)*C_size);
-    
+
+
     matrixRead(matrixOne, A_host, A_size);
     matrixRead(matrixTwo, B_host, B_size);
 
@@ -242,16 +243,20 @@ int main(int argc, char **argv)
         // matrix multiplication
 
         // allocate memory for device
-        HIP_CHECK(hipMalloc((void**) &A_device, sizeof(float) * A_size));
-        HIP_CHECK(hipMalloc((void**) &B_device, sizeof(float) * B_size));
-        HIP_CHECK(hipMalloc((void**) &C_device, sizeof(float) * C_size));
+        // HIP_CHECK(hipMalloc((void**) &A_device, sizeof(float) * A_size));
+        // HIP_CHECK(hipMalloc((void**) &B_device, sizeof(float) * B_size));
+        // HIP_CHECK(hipMalloc((void**) &C_device, sizeof(float) * C_size));
         
+        HIP_CHECK(hipHostMalloc((void**) &A_device, sizeof(float) * A_size));
+        HIP_CHECK(hipHostMalloc((void**) &B_device, sizeof(float) * B_size));
+        HIP_CHECK(hipHostMalloc((void**) &C_device, sizeof(float) * C_size));
+
         // copy data from host to device using stream...
         if (i == 0) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMain, CUMask_size, &CUMaskMin)); }
         if (i == 1) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMain, CUMask_size, &CUMaskHalf)); }
         if (i == 2) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMain, CUMask_size, &CUMaskMax)); }
 
-
+    
         HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMain));
         HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMain));
 
@@ -261,8 +266,6 @@ int main(int argc, char **argv)
 
         // launch kernel
         hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMain, row, col, out, A_device, B_device, C_device);
-        // hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMain, row, col, out, A_device, B_device, C_device);
-        // hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMain, row, col, out, A_device, B_device, C_device);
 
         HIP_CHECK(hipGetLastError());
 
