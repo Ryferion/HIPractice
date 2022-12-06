@@ -218,8 +218,9 @@ int main(int argc, char **argv)
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamHalf, CUMask_size, &CUMaskHalf));
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMax, CUMask_size, &CUMaskMax));
 
-    hipStream_t streamMain;
     hipStream_t streamAdd;
+    hipStream_t streamMultiply;
+    hipStream_t streamMemory;
 
     A_size = row * col;
     B_size = col * out;
@@ -232,6 +233,7 @@ int main(int argc, char **argv)
     double* A_host_pin = NULL;
     double* B_host_pin = NULL;
     double* C_host_pin = NULL;
+
     HIP_CHECK(hipHostMalloc((void**) &A_host_pin, sizeof(float) * A_size));
     HIP_CHECK(hipHostMalloc((void**) &B_host_pin, sizeof(float) * B_size));
     HIP_CHECK(hipHostMalloc((void**) &C_host_pin, sizeof(float) * C_size));
@@ -256,27 +258,41 @@ int main(int argc, char **argv)
         HIP_CHECK(hipMalloc((void**) &C_device, sizeof(float) * C_size));
 
         // copy data from host to device using stream...
-        if (i == 0) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMain, CUMask_size, &CUMaskMin)); }
-        if (i == 1) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMain, CUMask_size, &CUMaskHalf)); }
-        if (i == 2) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMain, CUMask_size, &CUMaskMax)); }
+        if (i == 0) 
+        { 
+            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, &CUMaskMin)); 
+            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, &CUMaskMin)); 
+
+        }
+        if (i == 1) 
+        { 
+            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, &CUMaskHalf)); 
+            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, &CUMaskHalf)); 
+        }
+        if (i == 2) 
+        { 
+            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, &CUMaskMax)); 
+            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, &CUMaskMax)); 
+        }
+        
     
-        HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMain));
-        HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMain));
+        HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));
+        HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMemory));
 
         // set up block dim and thread dim
         dim3 blocks(col / TILE_SIZE + 1, row / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
         dim3 threads(TILE_SIZE, TILE_SIZE, 1); // 3D dimensions of a block of threads
 
         // launch kernel
-        hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMain, row, col, out, A_device, B_device, C_device);
+        hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);
 
         HIP_CHECK(hipGetLastError());
 
         // copy matrix data from device to host
-        HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMain)); // host waits for kernel to finish here since hipMemcpy is blocking
+        HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
 
-        HIP_CHECK(hipStreamSynchronize(streamMain));
-
+        HIP_CHECK(hipStreamSynchronize(streamMultiply));
+        HIP_CHECK(hipStreamSynchronize(streamMemory));
 
 
         // addition
@@ -286,21 +302,22 @@ int main(int argc, char **argv)
         if (i == 2) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamAdd, CUMask_size, &CUMaskMax)); }
 
         // copy data from host to device 
-        HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamAdd));
-        HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamAdd));
+        HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));
+        HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMemory));
 
         // launch kernel
         hipLaunchKernelGGL(matrixAdd, blocks, threads, 0, streamAdd, row, col, out, C_device, A_device);
         HIP_CHECK(hipGetLastError());
 
         // copy matrix data from device to host
-        HIP_CHECK(hipMemcpyAsync(A_host, A_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamAdd)); // host waits for kernel to finish here since hipMemcpy is blocking
+        HIP_CHECK(hipMemcpyAsync(A_host, A_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
         
         HIP_CHECK(hipStreamSynchronize(streamAdd));
+        HIP_CHECK(hipStreamSynchronize(streamMultiply));
+        HIP_CHECK(hipStreamSynchronize(streamMemory));
 
-
-        HIP_CHECK(hipStreamDestroy(streamAdd));
-        HIP_CHECK(hipStreamDestroy(streamMain));
+        HIP_CHECK(hipStreamDestroy(streamMultiply));
+        HIP_CHECK(hipStreamDestroy(streamMemory));
 
         // end timer
         auto stop = high_resolution_clock::now();
