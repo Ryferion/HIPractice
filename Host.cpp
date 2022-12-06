@@ -293,9 +293,9 @@ int main(int argc, char **argv)
         // copy matrix data from device to host
         HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
 
-        HIP_CHECK(hipStreamSynchronize(streamMultiply));
+        // HIP_CHECK(hipStreamSynchronize(streamMultiply));
         HIP_CHECK(hipStreamSynchronize(streamMemory));
-
+// 
 
         // addition
 
@@ -314,9 +314,8 @@ int main(int argc, char **argv)
         // copy matrix data from device to host
         HIP_CHECK(hipMemcpyAsync(A_host, A_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
         
-        HIP_CHECK(hipStreamSynchronize(streamAdd));
-        HIP_CHECK(hipStreamSynchronize(streamMultiply));
-        HIP_CHECK(hipStreamSynchronize(streamMemory));
+        // HIP_CHECK(hipStreamSynchronize(streamAdd));
+        // HIP_CHECK(hipStreamSynchronize(streamMemory));
 
         HIP_CHECK(hipStreamDestroy(streamMultiply));
         HIP_CHECK(hipStreamDestroy(streamMemory));
