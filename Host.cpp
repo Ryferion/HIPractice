@@ -264,9 +264,8 @@ int main(int argc, char **argv)
         // copy data from host to device using stream...
         if (i == 0) 
         { 
-            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, &CUMaskMin)); 
-            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, &CUMaskMin)); 
-
+            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, &CUMaskMax)); 
+            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, &CUMaskMax)); 
         }
         if (i == 1) 
         { 
@@ -275,10 +274,9 @@ int main(int argc, char **argv)
         }
         if (i == 2) 
         { 
-            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, &CUMaskMax)); 
-            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, &CUMaskMax)); 
+            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, &CUMaskMin)); 
+            HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, &CUMaskMin)); 
         }
-        
     
         HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));
         HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMemory));
@@ -301,9 +299,9 @@ int main(int argc, char **argv)
 
         // addition
 
-        if (i == 0) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamAdd, CUMask_size, &CUMaskMin)); }
+        if (i == 0) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamAdd, CUMask_size, &CUMaskMax)); }
         if (i == 1) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamAdd, CUMask_size, &CUMaskHalf)); }
-        if (i == 2) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamAdd, CUMask_size, &CUMaskMax)); }
+        if (i == 2) { HIP_CHECK(hipExtStreamCreateWithCUMask(&streamAdd, CUMask_size, &CUMaskMin)); }
 
         // copy data from host to device 
         HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));
