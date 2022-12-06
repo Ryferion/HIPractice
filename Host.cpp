@@ -228,10 +228,10 @@ int main(int argc, char **argv)
     B_host = (float*) malloc( sizeof(float)*B_size);
     C_host = (float*) malloc( sizeof(float)*C_size);
 
-
-    HIP_CHECK(hipHostMalloc((void**) &A_host, sizeof(float) * A_size));
-    HIP_CHECK(hipHostMalloc((void**) &B_host, sizeof(float) * B_size));
-    HIP_CHECK(hipHostMalloc((void**) &C_host, sizeof(float) * C_size));
+    double A_host_pin, B_host_pin, C_host_pin;
+    HIP_CHECK(hipHostMalloc((void**) &A_host_pin, sizeof(float) * A_size));
+    HIP_CHECK(hipHostMalloc((void**) &B_host_pin, sizeof(float) * B_size));
+    HIP_CHECK(hipHostMalloc((void**) &C_host_pin, sizeof(float) * C_size));
 
 
     matrixRead(matrixOne, A_host, A_size);
@@ -304,11 +304,16 @@ int main(int argc, char **argv)
 
     free(A_host); // free host memory
     HIP_CHECK(hipFree(A_device)); // free device memory
+    HIP_CHECK(hipFree(A_host_pin)); // free pinned memory
+
     free(B_host); // free host memory
     HIP_CHECK(hipFree(B_device)); // free device memory
+    HIP_CHECK(hipFree(B_host_pin)); // free pinned memory
+    
     free(C_host); // free host memory
     HIP_CHECK(hipFree(C_device)); // free device memory
-
+    HIP_CHECK(hipFree(C_host_pin)); // free pinned memory
+    
 
     HIP_CHECK(hipStreamDestroy(streamMin));
     HIP_CHECK(hipStreamDestroy(streamHalf));
