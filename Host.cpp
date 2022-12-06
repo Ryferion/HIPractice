@@ -304,15 +304,15 @@ int main(int argc, char **argv)
 
     free(A_host); // free host memory
     HIP_CHECK(hipFree(A_device)); // free device memory
-    HIP_CHECK(hipFree(A_host_pin)); // free pinned memory
+    HIP_CHECK(hipHostFree(A_host_pin)); // free pinned memory
 
     free(B_host); // free host memory
     HIP_CHECK(hipFree(B_device)); // free device memory
-    HIP_CHECK(hipFree(B_host_pin)); // free pinned memory
+    HIP_CHECK(hipHostFree(B_host_pin)); // free pinned memory
     
     free(C_host); // free host memory
     HIP_CHECK(hipFree(C_device)); // free device memory
-    HIP_CHECK(hipFree(C_host_pin)); // free pinned memory
+    HIP_CHECK(hipHostFree(C_host_pin)); // free pinned memory
     
 
     HIP_CHECK(hipStreamDestroy(streamMin));
