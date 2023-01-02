@@ -183,7 +183,10 @@ int main(int argc, char **argv)
         //     CUMask = CUMask * 2 + 1;
         // }
     // }
-
+    if (mask == 0)
+    {
+        CUMask = 0x00000000;
+    }
     if (mask == 1)
     {
         CUMask = 0x0000000f;
