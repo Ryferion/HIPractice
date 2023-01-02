@@ -172,8 +172,9 @@ int main(int argc, char **argv)
     cout << endl;
 
     const uint32_t CUMask_size = 1;
-    uint32_t CUMask = 0x00000001;
+    uint32_t CUMask = 0x00000001; //assume 128
 
+    CUMask = mask;
     // if (mask < 8)
     // {
     //     for (int c = 0; c < mask; c++)
@@ -253,7 +254,7 @@ int main(int argc, char **argv)
     HIP_CHECK(hipHostFree(B_host)); // free pinned memory
     HIP_CHECK(hipHostFree(C_host)); // free pinned memory
     
-    
+
     // HIP_CHECK(hipStreamDestroy(streamMin));
     // HIP_CHECK(hipStreamDestroy(streamHalf));
     // HIP_CHECK(hipStreamDestroy(streamMax));
