@@ -173,9 +173,8 @@ int main(int argc, char **argv)
     cout << endl;
 
     const uint32_t CUMask_size = 1;
-    uint32_t CUMask = 0x00000001; //assume 128
-
-    CUMask = mask;
+    // uint32_t CUMask = 0x00000001; //assume 128 CUs
+    uint32_t CUMask = 1; 
     // if (mask < 8)
     // {
         for (int c = 0; c < mask; c++)
@@ -183,7 +182,7 @@ int main(int argc, char **argv)
             CUMask = CUMask * 2 + 1;
         }
     // }
-    cout << "CUMask: " << CUMask;
+    cout << "CUMask: " << CUMask << endl;
     
 
     hipStream_t streamMultiply;
