@@ -218,7 +218,7 @@ int main(int argc, char **argv)
     }
     if (mask == 9)
     {
-        CUMask = 0x8888888f;
+        CUMask = atoi(argv[3]);
     }
     
     cout << " CUMask: " << std::bitset<32>(CUMask) << endl;
