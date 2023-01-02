@@ -178,10 +178,10 @@ int main(int argc, char **argv)
     CUMask = mask;
     // if (mask < 8)
     // {
-    //     for (int c = 0; c < mask; c++)
-    //     {
-    //         CUMask += 15;
-    //     }
+        for (int c = 0; c < mask; c++)
+        {
+            CUMask * 2 + 1;
+        }
     // }
     
 
