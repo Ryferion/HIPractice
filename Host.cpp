@@ -133,9 +133,9 @@ int main(int argc, char **argv)
     HIP_CHECK(hipGetDeviceCount(&deviceCount)); // how many devices there be (should be 8 on idk)
     
     hipDeviceProp_t deviceProps;
-    HIP_CHECK(hipChooseDevice(&deviceProps, deviceID))
+    HIP_CHECK(hipGetDeviceProperties(&deviceProps, deviceID))
 
-    cout << " Current Device: " << deviceID << << "CU count: " << deviceProps.multiProcessorCount << endl;
+    cout << " Current Device: " << deviceID << "CU count: " << deviceProps.multiProcessorCount << endl;
     if (deviceID != 2)
     {
         return 0;
