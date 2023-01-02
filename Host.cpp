@@ -178,7 +178,7 @@ int main(int argc, char **argv)
     cout << endl;
 
     const uint32_t CUMask_size = 1;
-    uint32_t CUMask = 0x0000000f; //assume 32 CUs
+    // uint32_t CUMask = 0x0000000f; //assume 32 CUs
     uint64_t CUMask = 0x000000000000000f; //60 CUs
     // uint32_t CUMask = 0x000000; 
     // if (mask < 8)
