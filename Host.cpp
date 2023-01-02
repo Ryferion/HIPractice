@@ -219,6 +219,10 @@ int main(int argc, char **argv)
     {
         CUMask = 0xffffffff;
     }
+    if (mask == 9)
+    {
+        CUMask = 0xfffffffff;
+    }
     
     cout << "CUMask: " << std::bitset<32>(CUMask) << endl;
     
