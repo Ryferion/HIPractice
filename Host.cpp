@@ -156,18 +156,18 @@ int main(int argc, char **argv)
         matrixOne = "matrix1.txt";
         matrixTwo = "matrix2.txt";
         matrixThree = "matrix3.txt";
-    
+
     if (argv[1] != NULL)
+    {
+        row = atoi(argv[1]);
+        col = row;
+        out = col;
+    }
+
+    if (argv[2] != NULL)
     {
         mask = atoi(argv[2]);
     }
-
-    // if (argv[2] != NULL)
-    // {
-    //     row = atoi(argv[1]);
-    //     col = row;
-    //     out = col;
-    // }
 
     // streams
     cout << endl;
