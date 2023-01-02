@@ -174,7 +174,7 @@ int main(int argc, char **argv)
     cout << endl;
 
     const uint32_t CUMask_size = 1;
-    uint32_t CUMask = 0x0000000f; //assume 128 CUs
+    uint32_t CUMask = 0x0000000f; //assume 32 CUs
     // uint32_t CUMask = 0x000000; 
     // if (mask < 8)
     // {
@@ -217,7 +217,7 @@ int main(int argc, char **argv)
         CUMask = 0xffffffff;
     }
     
-    cout << "CUMask: " << std::bitset<128>(CUMask) << endl;
+    cout << "CUMask: " << std::bitset<32>(CUMask) << endl;
     
 
     hipStream_t streamMultiply;
