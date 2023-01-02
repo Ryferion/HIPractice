@@ -183,6 +183,7 @@ int main(int argc, char **argv)
             CUMask = CUMask * 2 + 1;
         }
     // }
+    cout << "CUMask: " << CUMask;
     
 
     hipStream_t streamMultiply;
