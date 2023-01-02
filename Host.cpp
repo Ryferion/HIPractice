@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 
+#include <bitset>
 #include <chrono>
 
 #include "hip/hip_runtime.h"
@@ -182,7 +183,7 @@ int main(int argc, char **argv)
             CUMask = CUMask * 2 + 1;
         }
     // }
-    cout << "CUMask: " << std::format("{:b}", CUMask) << endl;
+    cout << "CUMask: " << std::bitset<128>(CUMask) << endl;
     
 
     hipStream_t streamMultiply;
