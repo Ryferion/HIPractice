@@ -253,10 +253,10 @@ int main(int argc, char **argv)
     HIP_CHECK(hipHostFree(B_host)); // free pinned memory
     HIP_CHECK(hipHostFree(C_host)); // free pinned memory
     
-
-    HIP_CHECK(hipStreamDestroy(streamMin));
-    HIP_CHECK(hipStreamDestroy(streamHalf));
-    HIP_CHECK(hipStreamDestroy(streamMax));
+    
+    // HIP_CHECK(hipStreamDestroy(streamMin));
+    // HIP_CHECK(hipStreamDestroy(streamHalf));
+    // HIP_CHECK(hipStreamDestroy(streamMax));
 
     // end timer
     auto stop = high_resolution_clock::now();
