@@ -174,15 +174,49 @@ int main(int argc, char **argv)
     cout << endl;
 
     const uint32_t CUMask_size = 1;
-    // uint32_t CUMask = 0x00000001; //assume 128 CUs
-    uint32_t CUMask = 1; 
+    uint32_t CUMask = 0x0000000f; //assume 128 CUs
+    // uint32_t CUMask = 0x000000; 
     // if (mask < 8)
     // {
-        for (int c = 0; c < mask; c++)
-        {
-            CUMask = CUMask * 2 + 1;
-        }
+        // for (int c = 0; c < mask; c++)
+        // {
+        //     CUMask = CUMask * 2 + 1;
+        // }
     // }
+
+    if (mask == 1)
+    {
+        CUMask = 0x0000000f;
+    }
+    if (mask == 2)
+    {
+        CUMask = 0x000000ff;
+    }
+    if (mask == 3)
+    {
+        CUMask = 0x00000fff;
+    }
+    if (mask == 4)
+    {
+        CUMask = 0x0000ffff;
+    }
+    if (mask == 5)
+    {
+        CUMask = 0x000fffff;
+    }
+    if (mask == 6)
+    {
+        CUMask = 0x00ffffff;
+    }
+    if (mask == 7)
+    {
+        CUMask = 0x0fffffff;
+    }
+    if (mask == 8)
+    {
+        CUMask = 0xffffffff;
+    }
+    
     cout << "CUMask: " << std::bitset<128>(CUMask) << endl;
     
 
