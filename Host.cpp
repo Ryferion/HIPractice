@@ -135,7 +135,8 @@ int main(int argc, char **argv)
     hipDeviceProp_t deviceProps;
     HIP_CHECK(hipGetDeviceProperties(&deviceProps, deviceID))
 
-    cout << " Current Device: " << deviceID << " CU count: " << deviceProps.multiProcessorCount << endl;
+    cout << " Current Device: " << deviceID << endl;
+    cout << " CU count: " << deviceProps.multiProcessorCount << endl;
     if (deviceID != 2)
     {
         return 0;
@@ -221,6 +222,10 @@ int main(int argc, char **argv)
     if (mask == 8)
     {
         CUMask = 0xffffffff;
+    }
+    if (mask == 9)
+    {
+        CUMask = 0x88888888;
     }
     
     cout << " CUMask: " << std::bitset<32>(CUMask) << endl;
