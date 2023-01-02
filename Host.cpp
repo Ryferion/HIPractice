@@ -126,13 +126,16 @@ int main(int argc, char **argv)
     else if (__cplusplus == 199711L) std::cout << "C++98\n";
     else std::cout << "pre-standard C++\n";
 
-    int deviceCount = -1, deviceID = -1;
+    int deviceCount = -1, deviceID = -1, CUCount = -1;
 
     HIP_CHECK(hipSetDevice(DEVICE_NUM)); // use GPU 2
     HIP_CHECK(hipGetDevice(&deviceID)); 
     HIP_CHECK(hipGetDeviceCount(&deviceCount)); // how many devices there be (should be 8 on idk)
     
-    cout << " Current Device: " << deviceID << endl;
+    hipDeviceProp_t deviceProps;
+    HIP_CHECK(hipChooseDevice(&deviceProps, deviceID))
+
+    cout << " Current Device: " << deviceID << << "CU count: " << deviceProps.multiProcessorCount << endl;
     if (deviceID != 2)
     {
         return 0;
@@ -173,7 +176,7 @@ int main(int argc, char **argv)
     // streams
     cout << endl;
 
-    const uint32_t CUMask_size = 1;
+    const uint32_t CUMask_size = 2;
     uint32_t CUMask = 0x0000000f; //assume 32 CUs
     // uint32_t CUMask = 0x000000; 
     // if (mask < 8)
@@ -218,10 +221,6 @@ int main(int argc, char **argv)
     if (mask == 8)
     {
         CUMask = 0xffffffff;
-    }
-    if (mask == 9)
-    {
-        CUMask = 0xfffffffff;
     }
     
     cout << "CUMask: " << std::bitset<32>(CUMask) << endl;
