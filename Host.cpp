@@ -180,7 +180,7 @@ int main(int argc, char **argv)
     // {
         for (int c = 0; c < mask; c++)
         {
-            CUMask * 2 + 1;
+            CUMask = CUMask * 2 + 1;
         }
     // }
     
