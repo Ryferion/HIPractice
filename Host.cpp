@@ -135,7 +135,7 @@ int main(int argc, char **argv)
     hipDeviceProp_t deviceProps;
     HIP_CHECK(hipGetDeviceProperties(&deviceProps, deviceID))
 
-    cout << " Current Device: " << deviceID << "CU count: " << deviceProps.multiProcessorCount << endl;
+    cout << " Current Device: " << deviceID << " CU count: " << deviceProps.multiProcessorCount << endl;
     if (deviceID != 2)
     {
         return 0;
@@ -176,7 +176,7 @@ int main(int argc, char **argv)
     // streams
     cout << endl;
 
-    const uint32_t CUMask_size = 2;
+    const uint32_t CUMask_size = 5;
     uint32_t CUMask = 0x0000000f; //assume 32 CUs
     // uint32_t CUMask = 0x000000; 
     // if (mask < 8)
@@ -223,7 +223,7 @@ int main(int argc, char **argv)
         CUMask = 0xffffffff;
     }
     
-    cout << "CUMask: " << std::bitset<32>(CUMask) << endl;
+    cout << " CUMask: " << std::bitset<32>(CUMask) << endl;
     
 
     hipStream_t streamMultiply;
