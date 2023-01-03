@@ -302,7 +302,7 @@ int main(int argc, char **argv)
 
     // thread 1
     pthread_t thread_id;
-    struct arguments firstHalf = (struct arguments *) malloc(sizeof(struct arguments));
+    struct arguments *firstHalf = (struct arguments *) malloc(sizeof(struct arguments));
     firstHalf->arg_mask = 44;
     firstHalf->arg_row = row;
     firstHalf->arg_col = col;
