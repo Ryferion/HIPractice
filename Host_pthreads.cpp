@@ -324,8 +324,9 @@ int main(int argc, char **argv)
     pthread_create(&pthread_id, NULL, &hip, (void *)firstHalf);
     pthread_create(&pthread_id, NULL, &hip, (void *)secondHalf);
     pthread_join(pthread_id, NULL);
+    cout << "threads done" << endl;
+    pthread_cancel(pthread_id);
     pthread_exit(NULL);
-
     free(firstHalf);
     return 0;
 }
