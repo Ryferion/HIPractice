@@ -118,13 +118,32 @@ void matrixRead(string fileName, float *readTo, int size)
     }
 }
 
-void hip(int mask, int CUMask, int row, int col, int out, string matrixOne, string matrixTwo, string matrixThree)
+struct arguments {
+    int arg_mask;
+    int arg_row;
+    int arg_col;
+    int arg_out;
+    string arg_firstMatrix;
+    string arg_secondMatrix;
+    string arg_thirdMatrix;
+}
+
+void hip(void* args)
 {
+    int mask = args->arg_mask;
+    int row = args->arg_row;
+    int col = args->arg_row;
+    int out = args->arg_out;
+    string matrixOne = args->arg_firstMatrix;
+    string matrixTwo = args->arg_secondMatrix;
+    string matrixThree = args->arg_thirdMatrix;
+    
     int iter = 0;
     // for (iter = 0; iter < mask; iter++)
     { 
 
     // memory related variables
+    uint32_t CUMask = 1;
     const uint32_t CUMask_size = 1;
     float *A_host, *B_host, *C_host;
     float *A_device, *B_device, *C_device;
@@ -280,15 +299,31 @@ int main(int argc, char **argv)
         mask = atoi(argv[2]);
     }
 
-    // streams
-    cout << endl;
-
-    // uint32_t CUMask = 0x0000000f; 
-    uint32_t CUMask = 1;
-
+    // thread 1
     pthread_t thread_id;
+    struct arguments firstHalf = (struct arguments *) malloc(sizeof(struct arguments));
+    firstHalf->arg_mask = 44;
+    firstHalf->arg_row = row;
+    firstHalf->arg_col = col;
+    firstHalf->arg_out = out;
+    firstHalf->arg_firstMatrix = matrixOne;
+    firstHalf->arg_secondMatrix = matrixTwo;
+    firstHalf->arg_thirdMatrix = matrixThree;
 
-    pthread_create(&thread_id, NULL, hip, mask, CUMask, row, col, out, matrixOne, matrixTwo, matrixThree);
+    pthread_create(&thread_id, NULL, hip, void* firstHalf);
 
+    // thread 2
+    struct arguments secondHalf = (struct arguments *) malloc(sizeof(struct arguments));
+    secondHalf->arg_mask = 444;
+    secondHalf->arg_row = row;
+    secondHalf->arg_col = col;
+    secondHalf->arg_out = out;
+    secondHalf->arg_firstMatrix = matrixOne;
+    secondHalf->arg_secondMatrix = matrixTwo;
+    secondHalf->arg_thirdMatrix = matrixThree;
+    pthread_create(&thread_id, NULL, hip, void* secondHalf);
+
+    // pthread_join(thread_id, NULL);
+    pthread_exit(NULL);
     return 0;
 }
