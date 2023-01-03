@@ -130,13 +130,13 @@ struct arguments {
 
 void hip(void* args)
 {
-    int mask = args->arg_mask;
-    int row = args->arg_row;
-    int col = args->arg_row;
-    int out = args->arg_out;
-    string matrixOne = args->arg_firstMatrix;
-    string matrixTwo = args->arg_secondMatrix;
-    string matrixThree = args->arg_thirdMatrix;
+    int mask = (struct arguments*)args->arg_mask;
+    int row = (struct arguments*)args->arg_row;
+    int col = (struct arguments*)args->arg_row;
+    int out = (struct arguments*)args->arg_out;
+    string matrixOne = (struct arguments*)args->arg_firstMatrix;
+    string matrixTwo = (struct arguments*)args->arg_secondMatrix;
+    string matrixThree = (struct arguments*)args->arg_thirdMatrix;
     
     int iter = 0;
     // for (iter = 0; iter < mask; iter++)
@@ -302,26 +302,26 @@ int main(int argc, char **argv)
     // thread 1
     pthread_t thread_id;
     struct arguments firstHalf = (struct arguments *) malloc(sizeof(struct arguments));
-    firstHalf->arg_mask = 44;
-    firstHalf->arg_row = row;
-    firstHalf->arg_col = col;
-    firstHalf->arg_out = out;
-    firstHalf->arg_firstMatrix = matrixOne;
-    firstHalf->arg_secondMatrix = matrixTwo;
-    firstHalf->arg_thirdMatrix = matrixThree;
+    firstHalf.arg_mask = 44;
+    firstHalf.arg_row = row;
+    firstHalf.arg_col = col;
+    firstHalf.arg_out = out;
+    firstHalf.arg_firstMatrix = matrixOne;
+    firstHalf.arg_secondMatrix = matrixTwo;
+    firstHalf.arg_thirdMatrix = matrixThree;
 
     pthread_create(&thread_id, NULL, hip, void* firstHalf);
 
-    // thread 2
-    struct arguments secondHalf = (struct arguments *) malloc(sizeof(struct arguments));
-    secondHalf->arg_mask = 444;
-    secondHalf->arg_row = row;
-    secondHalf->arg_col = col;
-    secondHalf->arg_out = out;
-    secondHalf->arg_firstMatrix = matrixOne;
-    secondHalf->arg_secondMatrix = matrixTwo;
-    secondHalf->arg_thirdMatrix = matrixThree;
-    pthread_create(&thread_id, NULL, hip, void* secondHalf);
+    // // thread 2
+    // struct arguments secondHalf = (struct arguments *) malloc(sizeof(struct arguments));
+    // secondHalf->arg_mask = 444;
+    // secondHalf->arg_row = row;
+    // secondHalf->arg_col = col;
+    // secondHalf->arg_out = out;
+    // secondHalf->arg_firstMatrix = matrixOne;
+    // secondHalf->arg_secondMatrix = matrixTwo;
+    // secondHalf->arg_thirdMatrix = matrixThree;
+    // pthread_create(&thread_id, NULL, hip, void* secondHalf);
 
     // pthread_join(thread_id, NULL);
     pthread_exit(NULL);
