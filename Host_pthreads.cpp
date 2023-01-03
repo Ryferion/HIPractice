@@ -302,7 +302,7 @@ int main(int argc, char **argv)
     }
 
     // thread 1
-    pthread_t thread_id;
+    pthread_t pthread_id;
     struct arguments *firstHalf = (struct arguments *) malloc(sizeof(struct arguments));
     firstHalf->arg_mask = 44;
     firstHalf->arg_row = row;
@@ -312,8 +312,8 @@ int main(int argc, char **argv)
     firstHalf->arg_secondMatrix = matrixTwo;
     firstHalf->arg_thirdMatrix = matrixThree;
 
-    pthread_create(&thread_id, NULL, &hip, (void *)firstHalf);
-    pthread_join(thread_id, NULL);
+    pthread_create(&pthread_id, NULL, &hip, (void *)firstHalf);
+    pthread_join(pthread_id, NULL);
     pthread_exit(NULL);
     return 0;
 }
