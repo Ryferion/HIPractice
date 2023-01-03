@@ -3,6 +3,7 @@
 
 #include <bitset>
 #include <chrono>
+#include <pthread.h>
 
 #include "hip/hip_runtime.h"
 
@@ -117,72 +118,44 @@ void matrixRead(string fileName, float *readTo, int size)
     }
 }
 
-int main(int argc, char **argv)
+struct arguments {
+    int arg_mask;
+    int arg_row;
+    int arg_col;
+    int arg_out;
+    string arg_firstMatrix;
+    string arg_secondMatrix;
+    string arg_thirdMatrix;
+};
+
+void hip(void *args)
 {
-    cout << "C++ version: ";
-    if (__cplusplus == 201703L) std::cout << "C++17\n";
-    else if (__cplusplus == 201402L) std::cout << "C++14\n";
-    else if (__cplusplus == 201103L) std::cout << "C++11\n";
-    else if (__cplusplus == 199711L) std::cout << "C++98\n";
-    else std::cout << "pre-standard C++\n";
-
-    int deviceCount = -1, deviceID = -1, CUCount = -1;
-
-    HIP_CHECK(hipSetDevice(DEVICE_NUM)); // use GPU 2
-    HIP_CHECK(hipGetDevice(&deviceID)); 
-    HIP_CHECK(hipGetDeviceCount(&deviceCount)); // how many devices there be (should be 8 on idk)
+    struct arguments *inputArgs = struct arguments* args;
+    int mask = inputArgs->arg_mask;
+    int row = inputArgs->arg_row;
+    int col = inputArgs->arg_row;
+    int out = inputArgs->arg_out;
+    string matrixOne = inputArgs->arg_firstMatrix;
+    string matrixTwo = inputArgs->arg_secondMatrix;
+    string matrixThree = inputArgs->arg_thirdMatrix;
     
-    hipDeviceProp_t deviceProps;
-    HIP_CHECK(hipGetDeviceProperties(&deviceProps, deviceID))
+    int iter = 0;
+    // for (iter = 0; iter < mask; iter++)
+    { 
 
-    cout << " Current Device: " << deviceID << endl;
-    cout << " CU count: " << deviceProps.multiProcessorCount << endl;
-    if (deviceID != 2)
-    {
-        return 0;
-    }
-
+    // memory related variables
+    uint32_t CUMask = 1;
+    const uint32_t CUMask_size = 1;
     float *A_host, *B_host, *C_host;
     float *A_device, *B_device, *C_device;
     size_t A_size, B_size, C_size;
 
-    /*
-    A = row x col
-    B = col x out
-    C = row x out
-    */
-
-    int mask = 1;
-    int row, col, out;
-    string matrixOne, matrixTwo, matrixThree;
-        row = 8;
-        col = 8;
-        out = 8;
-        matrixOne = "matrix1.txt";
-        matrixTwo = "matrix2.txt";
-        matrixThree = "matrix3.txt";
-
-    if (argv[1] != NULL)
+    // set mask stuff
+    if (iter != 0)
     {
-        row = atoi(argv[1]);
-        col = row;
-        out = col;
+        CUMask = CUMask * 2 + 1;  
     }
 
-    if (argv[2] != NULL)
-    {
-        mask = atoi(argv[2]);
-    }
-
-    // streams
-    cout << endl;
-
-    const uint32_t CUMask_size = 1;
-    // uint32_t CUMask = 0x0000000f; 
-    uint32_t CUMask = 1;
-    
-    // for (int iter = 0; iter < mask; iter++)
-    { 
     if (mask == 44)
     {
         CUMask = 0x0000ffff;
@@ -192,8 +165,10 @@ int main(int argc, char **argv)
         CUMask = 0xffff0000;
     }
 
+    // print mask to check
     cout << " CUMask: " << std::bitset<32>(CUMask) << endl;
     
+    // create streams
     hipStream_t streamMultiply;
     hipStream_t streamMemory;
 
@@ -205,11 +180,12 @@ int main(int argc, char **argv)
     // B_host = (float*) malloc( sizeof(float)*B_size);
     // C_host = (float*) malloc( sizeof(float)*C_size);
     
+    // allocate host memory
     HIP_CHECK(hipHostMalloc((void**) &A_host, sizeof(float) * A_size));
     HIP_CHECK(hipHostMalloc((void**) &B_host, sizeof(float) * B_size));
     HIP_CHECK(hipHostMalloc((void**) &C_host, sizeof(float) * C_size));
     
-
+    // fill host matrices with stuff from text files
     matrixRead(matrixOne, A_host, A_size);
     matrixRead(matrixTwo, B_host, B_size);
 
@@ -267,7 +243,88 @@ int main(int argc, char **argv)
     auto duration = duration_cast<microseconds>(stop - start);
     cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
     // cout << duration.count() << endl;
-    // CUMask = CUMask * 2 + 1;  
+
     }
+}
+
+int main(int argc, char **argv)
+{
+    cout << "C++ version: ";
+    if (__cplusplus == 201703L) std::cout << "C++17\n";
+    else if (__cplusplus == 201402L) std::cout << "C++14\n";
+    else if (__cplusplus == 201103L) std::cout << "C++11\n";
+    else if (__cplusplus == 199711L) std::cout << "C++98\n";
+    else std::cout << "pre-standard C++\n";
+
+    int deviceCount = -1, deviceID = -1, CUCount = -1;
+
+    HIP_CHECK(hipSetDevice(DEVICE_NUM)); // use GPU 2
+    HIP_CHECK(hipGetDevice(&deviceID)); 
+    HIP_CHECK(hipGetDeviceCount(&deviceCount)); // how many devices there be (should be 8 on idk)
+    
+    hipDeviceProp_t deviceProps;
+    HIP_CHECK(hipGetDeviceProperties(&deviceProps, deviceID))
+
+    cout << " Current Device: " << deviceID << endl;
+    cout << " CU count: " << deviceProps.multiProcessorCount << endl;
+    if (deviceID != 2)
+    {
+        return 0;
+    }
+
+    /*
+    A = row x col
+    B = col x out
+    C = row x out
+    */
+
+    int mask = 1;
+    int row, col, out;
+    string matrixOne, matrixTwo, matrixThree;
+        row = 8;
+        col = 8;
+        out = 8;
+        matrixOne = "matrix1.txt";
+        matrixTwo = "matrix2.txt";
+        matrixThree = "matrix3.txt";
+
+    if (argv[1] != NULL)
+    {
+        row = atoi(argv[1]);
+        col = row;
+        out = col;
+    }
+
+    if (argv[2] != NULL)
+    {
+        mask = atoi(argv[2]);
+    }
+
+    // thread 1
+    pthread_t thread_id;
+    struct arguments firstHalf = (struct arguments *) malloc(sizeof(struct arguments));
+    firstHalf.arg_mask = 44;
+    firstHalf.arg_row = row;
+    firstHalf.arg_col = col;
+    firstHalf.arg_out = out;
+    firstHalf.arg_firstMatrix = matrixOne;
+    firstHalf.arg_secondMatrix = matrixTwo;
+    firstHalf.arg_thirdMatrix = matrixThree;
+
+    pthread_create(&thread_id, NULL, hip, void* firstHalf);
+
+    // // thread 2
+    // struct arguments secondHalf = (struct arguments *) malloc(sizeof(struct arguments));
+    // secondHalf->arg_mask = 444;
+    // secondHalf->arg_row = row;
+    // secondHalf->arg_col = col;
+    // secondHalf->arg_out = out;
+    // secondHalf->arg_firstMatrix = matrixOne;
+    // secondHalf->arg_secondMatrix = matrixTwo;
+    // secondHalf->arg_thirdMatrix = matrixThree;
+    // pthread_create(&thread_id, NULL, hip, void* secondHalf);
+
+    // pthread_join(thread_id, NULL);
+    pthread_exit(NULL);
     return 0;
 }
