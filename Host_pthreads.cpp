@@ -130,7 +130,7 @@ struct arguments {
 
 void hip(void *args)
 {
-    struct arguments *inputArgs = struct arguments* args;
+    struct arguments *inputArgs = (struct arguments*) args;
     int mask = inputArgs->arg_mask;
     int row = inputArgs->arg_row;
     int col = inputArgs->arg_row;
@@ -302,7 +302,7 @@ int main(int argc, char **argv)
 
     // thread 1
     pthread_t thread_id;
-    struct arguments firstHalf = (struct arguments *) malloc(sizeof(struct arguments));
+    struct arguments *firstHalf = (struct arguments *) malloc(sizeof(struct arguments));
     firstHalf.arg_mask = 44;
     firstHalf.arg_row = row;
     firstHalf.arg_col = col;
@@ -311,7 +311,7 @@ int main(int argc, char **argv)
     firstHalf.arg_secondMatrix = matrixTwo;
     firstHalf.arg_thirdMatrix = matrixThree;
 
-    pthread_create(&thread_id, NULL, hip, void* firstHalf);
+    pthread_create(&thread_id, NULL, hip, (void *)firstHalf);
 
     // // thread 2
     // struct arguments secondHalf = (struct arguments *) malloc(sizeof(struct arguments));
