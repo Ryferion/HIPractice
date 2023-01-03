@@ -302,14 +302,14 @@ int main(int argc, char **argv)
 
     // thread 1
     pthread_t thread_id;
-    struct arguments *firstHalf = (struct arguments *) malloc(sizeof(struct arguments));
-    firstHalf.arg_mask = 44;
-    firstHalf.arg_row = row;
-    firstHalf.arg_col = col;
-    firstHalf.arg_out = out;
-    firstHalf.arg_firstMatrix = matrixOne;
-    firstHalf.arg_secondMatrix = matrixTwo;
-    firstHalf.arg_thirdMatrix = matrixThree;
+    struct arguments firstHalf = (struct arguments *) malloc(sizeof(struct arguments));
+    firstHalf->arg_mask = 44;
+    firstHalf->arg_row = row;
+    firstHalf->arg_col = col;
+    firstHalf->arg_out = out;
+    firstHalf->arg_firstMatrix = matrixOne;
+    firstHalf->arg_secondMatrix = matrixTwo;
+    firstHalf->arg_thirdMatrix = matrixThree;
 
     pthread_create(&thread_id, NULL, hip, (void *)firstHalf);
 
