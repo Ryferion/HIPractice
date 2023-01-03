@@ -166,7 +166,7 @@ void* hip(void *args)
     }
 
     // print mask to check
-    cout << " CUMask: " << std::bitset<32>(CUMask) << endl;
+    // cout << " CUMask: " << std::bitset<32>(CUMask) << endl;
     
     // create streams
     hipStream_t streamMultiply;
@@ -241,7 +241,7 @@ void* hip(void *args)
     // end timer
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
+    cout << "Time taken by function: " << duration.count() << " microseconds, with mask" << std::bitset<32>(CUMask) <<  endl;
     // cout << duration.count() << endl;
 
     }
