@@ -245,7 +245,7 @@ void* hip(void *args)
     // cout << duration.count() << endl;
 
     }
-    // return NULL;
+    return NULL;
 }
 
 int main(int argc, char **argv)
