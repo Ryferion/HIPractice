@@ -312,8 +312,20 @@ int main(int argc, char **argv)
     firstHalf->arg_secondMatrix = matrixTwo;
     firstHalf->arg_thirdMatrix = matrixThree;
 
+    struct arguments *secondHalf = (struct arguments *) malloc(sizeof(struct arguments));
+    secondHalf->arg_mask = 444;
+    secondHalf->arg_row = row;
+    secondHalf->arg_col = col;
+    secondHalf->arg_out = out;
+    secondHalf->arg_firstMatrix = matrixOne;
+    secondHalf->arg_secondMatrix = matrixTwo;
+    secondHalf->arg_thirdMatrix = matrixThree;
+
     pthread_create(&pthread_id, NULL, &hip, (void *)firstHalf);
+    pthread_create(&pthread_id, NULL, &hip, (void *)secondHalf);
     pthread_join(pthread_id, NULL);
     pthread_exit(NULL);
+
+    free(firstHalf);
     return 0;
 }
