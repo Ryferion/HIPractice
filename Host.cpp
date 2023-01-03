@@ -120,12 +120,21 @@ void matrixRead(string fileName, float *readTo, int size)
 
 void hip(int mask, int CUMask, int row, int col, int out, string matrixOne, string matrixTwo, string matrixThree)
 {
-    // for (int iter = 0; iter < mask; iter++)
+    int iter = 0;
+    // for (iter = 0; iter < mask; iter++)
     { 
 
+    // memory related variables
+    const uint32_t CUMask_size = 1;
     float *A_host, *B_host, *C_host;
     float *A_device, *B_device, *C_device;
     size_t A_size, B_size, C_size;
+
+    // set mask stuff
+    if (iter != 0)
+    {
+        CUMask = CUMask * 2 + 1;  
+    }
 
     if (mask == 44)
     {
@@ -136,8 +145,10 @@ void hip(int mask, int CUMask, int row, int col, int out, string matrixOne, stri
         CUMask = 0xffff0000;
     }
 
+    // print mask to check
     cout << " CUMask: " << std::bitset<32>(CUMask) << endl;
     
+    // create streams
     hipStream_t streamMultiply;
     hipStream_t streamMemory;
 
@@ -149,11 +160,12 @@ void hip(int mask, int CUMask, int row, int col, int out, string matrixOne, stri
     // B_host = (float*) malloc( sizeof(float)*B_size);
     // C_host = (float*) malloc( sizeof(float)*C_size);
     
+    // allocate host memory
     HIP_CHECK(hipHostMalloc((void**) &A_host, sizeof(float) * A_size));
     HIP_CHECK(hipHostMalloc((void**) &B_host, sizeof(float) * B_size));
     HIP_CHECK(hipHostMalloc((void**) &C_host, sizeof(float) * C_size));
     
-
+    // fill host matrices with stuff from text files
     matrixRead(matrixOne, A_host, A_size);
     matrixRead(matrixTwo, B_host, B_size);
 
@@ -211,7 +223,7 @@ void hip(int mask, int CUMask, int row, int col, int out, string matrixOne, stri
     auto duration = duration_cast<microseconds>(stop - start);
     cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
     // cout << duration.count() << endl;
-    // CUMask = CUMask * 2 + 1;  
+
     }
 }
 
@@ -271,7 +283,6 @@ int main(int argc, char **argv)
     // streams
     cout << endl;
 
-    const uint32_t CUMask_size = 1;
     // uint32_t CUMask = 0x0000000f; 
     uint32_t CUMask = 1;
 
