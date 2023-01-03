@@ -139,6 +139,7 @@ void* hip(void *args)
     string matrixTwo = inputArgs->arg_secondMatrix;
     string matrixThree = inputArgs->arg_thirdMatrix;
     
+    cout << mask << " " << row << " " << matrixOne << endl;
     int iter = 0;
     // for (iter = 0; iter < mask; iter++)
     { 
