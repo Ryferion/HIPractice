@@ -128,7 +128,7 @@ struct arguments {
     string arg_thirdMatrix;
 };
 
-void hip(void *args)
+void* hip(void *args)
 {
     struct arguments *inputArgs = (struct arguments*) args;
     int mask = inputArgs->arg_mask;
@@ -245,6 +245,7 @@ void hip(void *args)
     // cout << duration.count() << endl;
 
     }
+    return NULL;
 }
 
 int main(int argc, char **argv)
@@ -311,20 +312,9 @@ int main(int argc, char **argv)
     firstHalf->arg_secondMatrix = matrixTwo;
     firstHalf->arg_thirdMatrix = matrixThree;
 
-    pthread_create(&thread_id, NULL, hip, (void *)firstHalf);
+    pthread_create(&thread_id, NULL, &hip, (void *)firstHalf);
 
-    // // thread 2
-    // struct arguments secondHalf = (struct arguments *) malloc(sizeof(struct arguments));
-    // secondHalf->arg_mask = 444;
-    // secondHalf->arg_row = row;
-    // secondHalf->arg_col = col;
-    // secondHalf->arg_out = out;
-    // secondHalf->arg_firstMatrix = matrixOne;
-    // secondHalf->arg_secondMatrix = matrixTwo;
-    // secondHalf->arg_thirdMatrix = matrixThree;
-    // pthread_create(&thread_id, NULL, hip, void* secondHalf);
 
-    // pthread_join(thread_id, NULL);
     pthread_exit(NULL);
     return 0;
 }
