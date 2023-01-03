@@ -130,13 +130,14 @@ struct arguments {
 
 void hip(void* args)
 {
-    int mask = (struct arguments*)args->arg_mask;
-    int row = (struct arguments*)args->arg_row;
-    int col = (struct arguments*)args->arg_row;
-    int out = (struct arguments*)args->arg_out;
-    string matrixOne = (struct arguments*)args->arg_firstMatrix;
-    string matrixTwo = (struct arguments*)args->arg_secondMatrix;
-    string matrixThree = (struct arguments*)args->arg_thirdMatrix;
+    struct arguments *inputArgs = args;
+    int mask = inputArgs->arg_mask;
+    int row = inputArgs->arg_row;
+    int col = inputArgs->arg_row;
+    int out = inputArgs->arg_out;
+    string matrixOne = inputArgs->arg_firstMatrix;
+    string matrixTwo = inputArgs->arg_secondMatrix;
+    string matrixThree = inputArgs->arg_thirdMatrix;
     
     int iter = 0;
     // for (iter = 0; iter < mask; iter++)
