@@ -139,7 +139,6 @@ void* hip(void *args)
     string matrixTwo = inputArgs->arg_secondMatrix;
     string matrixThree = inputArgs->arg_thirdMatrix;
     
-    cout << mask << " " << row << " " << matrixOne << endl;
     int iter = 0;
     // for (iter = 0; iter < mask; iter++)
     { 
@@ -246,7 +245,7 @@ void* hip(void *args)
     // cout << duration.count() << endl;
 
     }
-    return NULL;
+    // return NULL;
 }
 
 int main(int argc, char **argv)
@@ -314,8 +313,7 @@ int main(int argc, char **argv)
     firstHalf->arg_thirdMatrix = matrixThree;
 
     pthread_create(&thread_id, NULL, &hip, (void *)firstHalf);
-
-
+    pthread_join(tid, NULL);
     pthread_exit(NULL);
     return 0;
 }
