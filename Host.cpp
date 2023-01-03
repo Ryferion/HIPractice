@@ -181,7 +181,7 @@ int main(int argc, char **argv)
     // uint32_t CUMask = 0x0000000f; 
     uint32_t CUMask = 1;
     
-    for (int iter = 0; iter < mask; iter++)
+    // for (int iter = 0; iter < mask; iter++)
     { 
     // if (mask == 0)
     // {
@@ -199,10 +199,14 @@ int main(int argc, char **argv)
     // {
     //     CUMask = 0x00000fff;
     // }
-    // if (mask == 4)
-    // {
-    //     CUMask = 0x0000ffff;
-    // }
+    if (mask == 44)
+    {
+        CUMask = 0x0000ffff;
+    }
+    if (mask == 444)
+    {
+        CUMask = 0xffff0000;
+    }
     // if (mask == 5)
     // {
     //     CUMask = 0x000fffff;
@@ -219,14 +223,9 @@ int main(int argc, char **argv)
     // {
     //     CUMask = 0xffffffff;
     // }
-    // if (mask == 44)
-    // {
-    //     CUMask = 0xffff0000;
-    // }
-    
-    // cout << " CUMask: " << std::bitset<32>(CUMask) << endl;
-    
 
+    cout << " CUMask: " << std::bitset<32>(CUMask) << endl;
+    
     hipStream_t streamMultiply;
     hipStream_t streamMemory;
 
@@ -298,9 +297,9 @@ int main(int argc, char **argv)
     // end timer
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
-    // cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
-    cout << duration.count() << endl;
-    CUMask = CUMask * 2 + 1;  
+    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
+    // cout << duration.count() << endl;
+    // CUMask = CUMask * 2 + 1;  
     }
     return 0;
 }
