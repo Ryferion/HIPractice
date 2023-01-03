@@ -224,7 +224,7 @@ int main(int argc, char **argv)
     //     CUMask = 0xffff0000;
     // }
     
-    cout << " CUMask: " << std::bitset<32>(CUMask) << endl;
+    // cout << " CUMask: " << std::bitset<32>(CUMask) << endl;
     
 
     hipStream_t streamMultiply;
@@ -298,8 +298,8 @@ int main(int argc, char **argv)
     // end timer
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
-
+    // cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
+    cout << duration.count() << endl;
     CUMask = CUMask * 2 + 1;  
     }
     return 0;
