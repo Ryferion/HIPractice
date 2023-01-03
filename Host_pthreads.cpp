@@ -313,7 +313,7 @@ int main(int argc, char **argv)
     firstHalf->arg_thirdMatrix = matrixThree;
 
     pthread_create(&thread_id, NULL, &hip, (void *)firstHalf);
-    pthread_join(tid, NULL);
+    pthread_join(thread_id, NULL);
     pthread_exit(NULL);
     return 0;
 }
