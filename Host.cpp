@@ -118,7 +118,7 @@ void matrixRead(string fileName, float *readTo, int size)
     }
 }
 
-void hip(int mask, int CUMask, int row, int col, int out)
+void hip(int mask, int CUMask, int row, int col, int out, string matrixOne, string matrixTwo, string matrixThree)
 {
     // for (int iter = 0; iter < mask; iter++)
     { 
@@ -277,7 +277,7 @@ int main(int argc, char **argv)
 
     pthread_t thread_id;
 
-    pthread_create(&thread_id, NULL, hip, mask, CUMask, row, col, out);
+    pthread_create(&thread_id, NULL, hip, mask, CUMask, row, col, out, matrixOne, matrixTwo, matrixThree);
 
     return 0;
 }
