@@ -182,8 +182,7 @@ int main(int argc, char **argv)
     uint32_t CUMask = 1;
     
     for (int iter = 0; iter < mask; iter++)
-    {
-        CUMask = CUMask * 2 + 1;   
+    { 
     // if (mask == 0)
     // {
     //     CUMask = 0x00000000;
@@ -301,7 +300,7 @@ int main(int argc, char **argv)
     auto duration = duration_cast<microseconds>(stop - start);
     cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
 
-
+    CUMask = CUMask * 2 + 1;  
     }
     return 0;
 }
