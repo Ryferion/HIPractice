@@ -3,6 +3,7 @@
 
 #include <bitset>
 #include <chrono>
+#include <pthread.h>
 
 #include "hip/hip_runtime.h"
 
@@ -117,88 +118,11 @@ void matrixRead(string fileName, float *readTo, int size)
     }
 }
 
-int main(int argc, char **argv)
+void hip(int mask, int CUMask, int row, int col, int out)
 {
-    cout << "C++ version: ";
-    if (__cplusplus == 201703L) std::cout << "C++17\n";
-    else if (__cplusplus == 201402L) std::cout << "C++14\n";
-    else if (__cplusplus == 201103L) std::cout << "C++11\n";
-    else if (__cplusplus == 199711L) std::cout << "C++98\n";
-    else std::cout << "pre-standard C++\n";
-
-    int deviceCount = -1, deviceID = -1, CUCount = -1;
-
-    HIP_CHECK(hipSetDevice(DEVICE_NUM)); // use GPU 2
-    HIP_CHECK(hipGetDevice(&deviceID)); 
-    HIP_CHECK(hipGetDeviceCount(&deviceCount)); // how many devices there be (should be 8 on idk)
-    
-    hipDeviceProp_t deviceProps;
-    HIP_CHECK(hipGetDeviceProperties(&deviceProps, deviceID))
-
-    cout << " Current Device: " << deviceID << endl;
-    cout << " CU count: " << deviceProps.multiProcessorCount << endl;
-    if (deviceID != 2)
-    {
-        return 0;
-    }
-
-    float *A_host, *B_host, *C_host;
-    float *A_device, *B_device, *C_device;
-    size_t A_size, B_size, C_size;
-
-    /*
-    A = row x col
-    B = col x out
-    C = row x out
-    */
-
-    int mask = 1;
-    int row, col, out;
-    string matrixOne, matrixTwo, matrixThree;
-        row = 8;
-        col = 8;
-        out = 8;
-        matrixOne = "matrix1.txt";
-        matrixTwo = "matrix2.txt";
-        matrixThree = "matrix3.txt";
-
-    if (argv[1] != NULL)
-    {
-        row = atoi(argv[1]);
-        col = row;
-        out = col;
-    }
-
-    if (argv[2] != NULL)
-    {
-        mask = atoi(argv[2]);
-    }
-
-    // streams
-    cout << endl;
-
-    const uint32_t CUMask_size = 1;
-    // uint32_t CUMask = 0x0000000f; 
-    uint32_t CUMask = 1;
-    
     // for (int iter = 0; iter < mask; iter++)
     { 
-    // if (mask == 0)
-    // {
-    //     CUMask = 0x00000000;
-    // }
-    // if (mask == 1)
-    // {
-    //     CUMask = 0x0000000f;
-    // }
-    // if (mask == 2)
-    // {
-    //     CUMask = 0x000000ff;
-    // }
-    // if (mask == 3)
-    // {
-    //     CUMask = 0x00000fff;
-    // }
+
     if (mask == 44)
     {
         CUMask = 0x0000ffff;
@@ -207,22 +131,6 @@ int main(int argc, char **argv)
     {
         CUMask = 0xffff0000;
     }
-    // if (mask == 5)
-    // {
-    //     CUMask = 0x000fffff;
-    // }
-    // if (mask == 6)
-    // {
-    //     CUMask = 0x00ffffff;
-    // }
-    // if (mask == 7)
-    // {
-    //     CUMask = 0x0fffffff;
-    // }
-    // if (mask == 8)
-    // {
-    //     CUMask = 0xffffffff;
-    // }
 
     cout << " CUMask: " << std::bitset<32>(CUMask) << endl;
     
@@ -301,5 +209,75 @@ int main(int argc, char **argv)
     // cout << duration.count() << endl;
     // CUMask = CUMask * 2 + 1;  
     }
+}
+
+int main(int argc, char **argv)
+{
+    cout << "C++ version: ";
+    if (__cplusplus == 201703L) std::cout << "C++17\n";
+    else if (__cplusplus == 201402L) std::cout << "C++14\n";
+    else if (__cplusplus == 201103L) std::cout << "C++11\n";
+    else if (__cplusplus == 199711L) std::cout << "C++98\n";
+    else std::cout << "pre-standard C++\n";
+
+    int deviceCount = -1, deviceID = -1, CUCount = -1;
+
+    HIP_CHECK(hipSetDevice(DEVICE_NUM)); // use GPU 2
+    HIP_CHECK(hipGetDevice(&deviceID)); 
+    HIP_CHECK(hipGetDeviceCount(&deviceCount)); // how many devices there be (should be 8 on idk)
+    
+    hipDeviceProp_t deviceProps;
+    HIP_CHECK(hipGetDeviceProperties(&deviceProps, deviceID))
+
+    cout << " Current Device: " << deviceID << endl;
+    cout << " CU count: " << deviceProps.multiProcessorCount << endl;
+    if (deviceID != 2)
+    {
+        return 0;
+    }
+
+    float *A_host, *B_host, *C_host;
+    float *A_device, *B_device, *C_device;
+    size_t A_size, B_size, C_size;
+
+    /*
+    A = row x col
+    B = col x out
+    C = row x out
+    */
+
+    int mask = 1;
+    int row, col, out;
+    string matrixOne, matrixTwo, matrixThree;
+        row = 8;
+        col = 8;
+        out = 8;
+        matrixOne = "matrix1.txt";
+        matrixTwo = "matrix2.txt";
+        matrixThree = "matrix3.txt";
+
+    if (argv[1] != NULL)
+    {
+        row = atoi(argv[1]);
+        col = row;
+        out = col;
+    }
+
+    if (argv[2] != NULL)
+    {
+        mask = atoi(argv[2]);
+    }
+
+    // streams
+    cout << endl;
+
+    const uint32_t CUMask_size = 1;
+    // uint32_t CUMask = 0x0000000f; 
+    uint32_t CUMask = 1;
+
+    pthread_t thread_id;
+
+    pthread_create(&thread_id, NULL, hip, mask, CUMask, row, col, out);
+
     return 0;
 }
