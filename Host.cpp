@@ -123,6 +123,10 @@ void hip(int mask, int CUMask, int row, int col, int out)
     // for (int iter = 0; iter < mask; iter++)
     { 
 
+    float *A_host, *B_host, *C_host;
+    float *A_device, *B_device, *C_device;
+    size_t A_size, B_size, C_size;
+
     if (mask == 44)
     {
         CUMask = 0x0000ffff;
@@ -235,10 +239,6 @@ int main(int argc, char **argv)
     {
         return 0;
     }
-
-    float *A_host, *B_host, *C_host;
-    float *A_device, *B_device, *C_device;
-    size_t A_size, B_size, C_size;
 
     /*
     A = row x col
