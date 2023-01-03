@@ -178,48 +178,52 @@ int main(int argc, char **argv)
     cout << endl;
 
     const uint32_t CUMask_size = 1;
-    uint32_t CUMask = 0x0000000f; 
+    // uint32_t CUMask = 0x0000000f; 
+    uint32_t CUMask = 1;
     
-    if (mask == 0)
+    for (int iter = 0; iter < mask; iter++)
     {
-        CUMask = 0x00000000;
-    }
-    if (mask == 1)
-    {
-        CUMask = 0x0000000f;
-    }
-    if (mask == 2)
-    {
-        CUMask = 0x000000ff;
-    }
-    if (mask == 3)
-    {
-        CUMask = 0x00000fff;
-    }
-    if (mask == 4)
-    {
-        CUMask = 0x0000ffff;
-    }
-    if (mask == 5)
-    {
-        CUMask = 0x000fffff;
-    }
-    if (mask == 6)
-    {
-        CUMask = 0x00ffffff;
-    }
-    if (mask == 7)
-    {
-        CUMask = 0x0fffffff;
-    }
-    if (mask == 8)
-    {
-        CUMask = 0xffffffff;
-    }
-    if (mask == 9)
-    {
-        CUMask = atoi(argv[3]);
-    }
+        CUMask = CUMask * 2 + 1;   
+    // if (mask == 0)
+    // {
+    //     CUMask = 0x00000000;
+    // }
+    // if (mask == 1)
+    // {
+    //     CUMask = 0x0000000f;
+    // }
+    // if (mask == 2)
+    // {
+    //     CUMask = 0x000000ff;
+    // }
+    // if (mask == 3)
+    // {
+    //     CUMask = 0x00000fff;
+    // }
+    // if (mask == 4)
+    // {
+    //     CUMask = 0x0000ffff;
+    // }
+    // if (mask == 5)
+    // {
+    //     CUMask = 0x000fffff;
+    // }
+    // if (mask == 6)
+    // {
+    //     CUMask = 0x00ffffff;
+    // }
+    // if (mask == 7)
+    // {
+    //     CUMask = 0x0fffffff;
+    // }
+    // if (mask == 8)
+    // {
+    //     CUMask = 0xffffffff;
+    // }
+    // if (mask == 44)
+    // {
+    //     CUMask = 0xffff0000;
+    // }
     
     cout << " CUMask: " << std::bitset<32>(CUMask) << endl;
     
@@ -234,7 +238,7 @@ int main(int argc, char **argv)
     // A_host = (float*) malloc( sizeof(float)*A_size);
     // B_host = (float*) malloc( sizeof(float)*B_size);
     // C_host = (float*) malloc( sizeof(float)*C_size);
-
+    
     HIP_CHECK(hipHostMalloc((void**) &A_host, sizeof(float) * A_size));
     HIP_CHECK(hipHostMalloc((void**) &B_host, sizeof(float) * B_size));
     HIP_CHECK(hipHostMalloc((void**) &C_host, sizeof(float) * C_size));
@@ -274,8 +278,6 @@ int main(int argc, char **argv)
     // copy matrix data from device to host
     HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
 
-    // HIP_CHECK(hipStreamSynchronize(streamMultiply));
-    
     HIP_CHECK(hipStreamDestroy(streamMultiply));
     HIP_CHECK(hipStreamDestroy(streamMemory));
 
@@ -293,16 +295,13 @@ int main(int argc, char **argv)
     HIP_CHECK(hipHostFree(A_host)); // free pinned memory
     HIP_CHECK(hipHostFree(B_host)); // free pinned memory
     HIP_CHECK(hipHostFree(C_host)); // free pinned memory
-    
-
-    // HIP_CHECK(hipStreamDestroy(streamMin));
-    // HIP_CHECK(hipStreamDestroy(streamHalf));
-    // HIP_CHECK(hipStreamDestroy(streamMax));
 
     // end timer
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
     cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
 
+
+    }
     return 0;
 }
