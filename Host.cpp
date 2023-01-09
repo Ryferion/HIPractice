@@ -177,24 +177,26 @@ int main(int argc, char **argv)
     // streams
     cout << endl;
 
-    const uint32_t CUMask_size = 32;
-    // uint32_t CUMask = 0x0000000f; 
+
     uint32_t CUMask = 1;
-    // uint64_t CUMask = 1;
+    vector <uint32_t> CUMask;
+    const uint32_t CUMask_size = CUMask.size();
+
     // for (int iter = 0; iter < mask; iter++)
     { 
-
+        CUMask[0] = 0x00000001;
+        CUMask[0] = 0x00000001;
     if (mask == 1)
     {
-        CUMask = 0xffffffff;   
+        CUMask[0] = 0xffffffff;   
     }
     if (mask == 44)
     {
-        CUMask = 0x0000ffff;
+        CUMask[1] = 0x0000ffff;
     }
     if (mask == 444)
     {
-        CUMask = 0xffff0000;
+        CUMask[1] = 0xffff0000;
     }
 
     // cout << " CUMask: " << std::bitset<32 * CUMask_size>(CUMask) << endl;
@@ -230,6 +232,7 @@ int main(int argc, char **argv)
 
     // copy data from host to device using stream...
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, &CUMask)); 
+    
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, &CUMask)); 
 
     HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));
@@ -237,7 +240,7 @@ int main(int argc, char **argv)
 
     HIP_CHECK(hipExtStreamGetCUMask(streamMultiply, CUMask_size, &CUMask));
     cout << CUMask << endl;
-    cout << " CUMask: " << std::bitset<32 * CUMask_size>(CUMask) << endl;
+    cout << " CUMask: " << std::bitset<32 * 2>(CUMask) << endl;
     // set up block dim and thread dim
     dim3 blocks(col / TILE_SIZE + 1, row / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
     dim3 threads(TILE_SIZE, TILE_SIZE, 1); // 3D dimensions of a block of threads
