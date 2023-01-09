@@ -186,7 +186,7 @@ int main(int argc, char **argv)
 
     if (mask == 1)
     {
-        CUMask = 0xffffffffffffffff;   
+        CUMask = 0xffffffff;   
     }
     if (mask == 44)
     {
@@ -235,7 +235,7 @@ int main(int argc, char **argv)
     HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));
     HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMemory));
 
-    HIP_CHECK(hipExtStreamGetCUMask(&streamMultiply, CUMask_size, &CUMask));
+    HIP_CHECK(hipExtStreamGetCUMask(streamMultiply, CUMask_size, &CUMask));
     cout << CUMask << endl;
     // set up block dim and thread dim
     dim3 blocks(col / TILE_SIZE + 1, row / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
