@@ -183,7 +183,7 @@ int main(int argc, char **argv)
     
     // for (int iter = 0; iter < mask; iter++)
     { 
-    cout << mask << endl;
+
     if (mask == 1)
     {
         CUMask = 0xffffffffffffffff;   
