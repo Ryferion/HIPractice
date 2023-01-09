@@ -3,6 +3,7 @@
 
 #include <bitset>
 #include <chrono>
+#include <vector>
 
 #include "hip/hip_runtime.h"
 
