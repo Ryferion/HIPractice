@@ -177,12 +177,16 @@ int main(int argc, char **argv)
     // streams
     cout << endl;
 
-    const uint32_t CUMask_size = 1;
+    const uint32_t CUMask_size = 2;
     // uint32_t CUMask = 0x0000000f; 
     uint32_t CUMask = 1;
     
     // for (int iter = 0; iter < mask; iter++)
     { 
+    if (mask == 1)
+    {
+        CUMask = 0xffffffffffff;   
+    }
     if (mask == 44)
     {
         CUMask = 0x0000ffff;
