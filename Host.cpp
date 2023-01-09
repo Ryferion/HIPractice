@@ -183,9 +183,10 @@ int main(int argc, char **argv)
     
     // for (int iter = 0; iter < mask; iter++)
     { 
+    cout << mask << endl;
     if (mask == 1)
     {
-        CUMask = 0xffffffffffff;   
+        CUMask = 0xffffffffffffffff;   
     }
     if (mask == 44)
     {
@@ -196,7 +197,7 @@ int main(int argc, char **argv)
         CUMask = 0xffff0000;
     }
 
-    cout << " CUMask: " << std::bitset<32>(CUMask) << endl;
+    cout << " CUMask: " << std::bitset<32 * CUMask_size>(CUMask) << endl;
     
     hipStream_t streamMultiply;
     hipStream_t streamMemory;
