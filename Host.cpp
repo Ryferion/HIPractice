@@ -179,8 +179,8 @@ int main(int argc, char **argv)
 
     const uint32_t CUMask_size = 2;
     // uint32_t CUMask = 0x0000000f; 
-    uint32_t CUMask = 1;
-    
+    // uint32_t CUMask = 1;
+    uint64_t CUMask = 1;
     // for (int iter = 0; iter < mask; iter++)
     { 
 
