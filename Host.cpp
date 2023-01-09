@@ -179,8 +179,8 @@ int main(int argc, char **argv)
 
     const uint32_t CUMask_size = 2;
     // uint32_t CUMask = 0x0000000f; 
-    // uint32_t CUMask = 1;
-    uint64_t CUMask = 1;
+    uint32_t CUMask = 1;
+    // uint64_t CUMask = 1;
     // for (int iter = 0; iter < mask; iter++)
     { 
 
@@ -235,6 +235,8 @@ int main(int argc, char **argv)
     HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));
     HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMemory));
 
+    HIP_CHECK(hipExtStreamGetCUMask(&streamMultiply, CUMask_size, &CUMask));
+    cout << CUMask << endl;
     // set up block dim and thread dim
     dim3 blocks(col / TILE_SIZE + 1, row / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
     dim3 threads(TILE_SIZE, TILE_SIZE, 1); // 3D dimensions of a block of threads
