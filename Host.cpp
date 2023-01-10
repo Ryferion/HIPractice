@@ -252,8 +252,8 @@ int main(int argc, char **argv)
     HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMemory));
 
     HIP_CHECK(hipExtStreamGetCUMask(streamMultiply, CUMask_size, CUMask));
-    cout << CUMask << endl;
-    cout << " CUMask: " << std::bitset<32 * 2>(CUMask) << endl;
+    // cout << CUMask << endl;
+    // cout << " CUMask: " << std::bitset<32 * 2>(CUMask) << endl;
     // set up block dim and thread dim
     dim3 blocks(col / TILE_SIZE + 1, row / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
     dim3 threads(TILE_SIZE, TILE_SIZE, 1); // 3D dimensions of a block of threads
