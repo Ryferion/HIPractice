@@ -186,7 +186,6 @@ int main(int argc, char **argv)
     CUMask[0] = 0x00000001;
     CUMask[1] = 0x00000001; 
 
-    
     for (int iter = 0; iter < mask; iter++)
     { 
 
@@ -299,14 +298,7 @@ int main(int argc, char **argv)
     HIP_CHECK(hipHostFree(B_host)); // free pinned memory
     HIP_CHECK(hipHostFree(C_host)); // free pinned memory
 
-    if (place < 32)
-    {
-        CUMask[0] = CUMask[0] * 2 + 1;  
-    }
-    else
-    {
-        CUMask[1] = CUMask[1] * 2 + 1;  
-    }
-    }
+    CUMask[iter/32] = CUMask[iter/32] * 2 + 1;  
+
     return 0;
 }
