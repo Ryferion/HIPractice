@@ -185,11 +185,24 @@ int main(int argc, char **argv)
     // for (int iter = 0; iter < mask; iter++)
     { 
         CUMask[0] = 0x00000001;
-        CUMask[1] = 0x00000001;
+        CUMask[1] = 0x00000001; 
+
     if (mask == 1)
     {
-        CUMask[0] = 0xffffffff;   
+        CUMask[0] = 0xffffffff; 
+        CUMask[1] = 0x00000001;  
     }
+    if (mask == 2)
+    {
+        CUMask[0] = 0x00000001; 
+        CUMask[1] = 0xffffffff;  
+    }
+    if (mask == 3)
+    {
+        CUMask[0] = 0xffffffff; 
+        CUMask[1] = 0xffffffff;  
+    }
+
     if (mask == 44)
     {
         CUMask[1] = 0x0000ffff;
