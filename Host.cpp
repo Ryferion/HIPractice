@@ -186,6 +186,7 @@ int main(int argc, char **argv)
     CUMask[0] = 0x00000001;
     CUMask[1] = 0x00000001; 
 
+    int currentMask = 1;
     for (int iter = 0; iter < mask; iter++)
     { 
 
@@ -216,7 +217,7 @@ int main(int argc, char **argv)
     //     CUMask[1] = 0xffff0000;
     // }
 
-    // cout << " CUMask: " << std::bitset<32 * CUMask_size>(CUMask) << endl;
+    cout << " CUMask: " << std::bitset<32 * CUMask_size>(currentMask) << endl;
     
     hipStream_t streamMultiply;
     hipStream_t streamMemory;
@@ -254,7 +255,7 @@ int main(int argc, char **argv)
 
     uint32_t CUMask_out;
     HIP_CHECK(hipExtStreamGetCUMask(streamMultiply, CUMask_size, &CUMask_out));
-    cout << CUMask_out << endl;
+    // cout << CUMask_out << endl;
     // cout << " CUMask: " << std::bitset<32 * 2>(CUMask) << endl;
 
     // set up block dim and thread dim
@@ -299,6 +300,7 @@ int main(int argc, char **argv)
     HIP_CHECK(hipHostFree(C_host)); // free pinned memory
 
     CUMask[iter/32] = CUMask[iter/32] * 2 + 1;  
+    currentMask = CUMask[iter/32];
 
     }
     return 0;
