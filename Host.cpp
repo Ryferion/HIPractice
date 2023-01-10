@@ -217,7 +217,7 @@ int main(int argc, char **argv)
     //     CUMask[1] = 0xffff0000;
     // }
 
-    cout << " CUMask: " << std::bitset<32>(currentMask) << endl;
+    // cout << " CUMask: " << std::bitset<32>(currentMask) << endl;
     
     hipStream_t streamMultiply;
     hipStream_t streamMemory;
