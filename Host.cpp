@@ -183,37 +183,39 @@ int main(int argc, char **argv)
     uint32_t CUMask[2];
     const uint32_t CUMask_size = 2;
 
-    // for (int iter = 0; iter < mask; iter++)
+    CUMask[0] = 0x00000001;
+    CUMask[1] = 0x00000001; 
+
+    
+    for (int iter = 0; iter < mask; iter++)
     { 
-        CUMask[0] = 0x00000001;
-        CUMask[1] = 0x00000001; 
 
-    if (mask == 1)
-    {
-        CUMask[0] = 0x00000001; 
-        CUMask[1] = 0x00000000;  
-    }
-    if (mask == 2)
-    {
-        CUMask[0] = 0x00000000; 
-        CUMask[1] = 0xffffffff;  
-    }
-    if (mask == 3)
-    {
-        CUMask[0] = 0xffffffff; 
-        CUMask[1] = 0xffffffff;  
-    }
+    // if (mask == 1)
+    // {
+    //     CUMask[0] = 0x00000001; 
+    //     CUMask[1] = 0x00000000;  
+    // }
+    // if (mask == 2)
+    // {
+    //     CUMask[0] = 0x00000000; 
+    //     CUMask[1] = 0xffffffff;  
+    // }
+    // if (mask == 3)
+    // {
+    //     CUMask[0] = 0xffffffff; 
+    //     CUMask[1] = 0xffffffff;  
+    // }
 
-    if (mask == 44)
-    {
-        CUMask[0] = 0x00000000;
-        CUMask[1] = 0x0000ffff;
-    }
-    if (mask == 444)
-    {
-        CUMask[0] = 0x00000000;
-        CUMask[1] = 0xffff0000;
-    }
+    // if (mask == 44)
+    // {
+    //     CUMask[0] = 0x00000000;
+    //     CUMask[1] = 0x0000ffff;
+    // }
+    // if (mask == 444)
+    // {
+    //     CUMask[0] = 0x00000000;
+    //     CUMask[1] = 0xffff0000;
+    // }
 
     // cout << " CUMask: " << std::bitset<32 * CUMask_size>(CUMask) << endl;
     
@@ -297,7 +299,14 @@ int main(int argc, char **argv)
     HIP_CHECK(hipHostFree(B_host)); // free pinned memory
     HIP_CHECK(hipHostFree(C_host)); // free pinned memory
 
-    // CUMask = CUMask * 2 + 1;  
+    if (place < 32)
+    {
+        CUMask[0] = CUMask[0] * 2 + 1;  
+    }
+    else
+    {
+        CUMask[1] = CUMask[1] * 2 + 1;  
+    }
     }
     return 0;
 }
