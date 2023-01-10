@@ -181,7 +181,7 @@ int main(int argc, char **argv)
     
     // vector <uint32_t> CUMask;
     uint32_t CUMask[2];
-    const uint32_t CUMask_size = 8;
+    const uint32_t CUMask_size = 2;
 
     // for (int iter = 0; iter < mask; iter++)
     { 
@@ -270,7 +270,7 @@ int main(int argc, char **argv)
 
     HIP_CHECK(hipStreamSynchronize(streamMemory));
     
-    
+
     // copy matrix data from device to host
     HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
 
