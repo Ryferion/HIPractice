@@ -205,11 +205,11 @@ int main(int argc, char **argv)
 
     if (mask == 44)
     {
-        CUMask[1] = 0x0000ffff;
+        CUMask[0] = 0x0000ffff;
     }
     if (mask == 444)
     {
-        CUMask[1] = 0xffff0000;
+        CUMask[0] = 0xffff0000;
     }
 
     // cout << " CUMask: " << std::bitset<32 * CUMask_size>(CUMask) << endl;
@@ -250,10 +250,9 @@ int main(int argc, char **argv)
 
 
 
-    uint32_t CUMask_out[2];
+    uint32_t CUMask_out;
     HIP_CHECK(hipExtStreamGetCUMask(streamMultiply, CUMask_size, &CUMask_out));
-    cout << CUMask_out[0] << " " << CUMask_out[1] endl;
-
+    cout << CUMask_out << endl;
     // cout << " CUMask: " << std::bitset<32 * 2>(CUMask) << endl;
 
     // set up block dim and thread dim
@@ -272,7 +271,6 @@ int main(int argc, char **argv)
     
     // copy matrix data from device to host
     HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
-
 
     // end timer
     auto stop = high_resolution_clock::now();
