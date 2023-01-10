@@ -180,12 +180,12 @@ int main(int argc, char **argv)
 
     // vector <uint32_t> CUMask;
     uint32_t CUMask = 1;
-    uint32_t CUMask_size = 1;
+    uint32_t CUMask_size = 2;
     // const uint32_t CUMask_size = CUMask.size();
 
     // for (int iter = 0; iter < mask; iter++)
     { 
-        
+
     if (mask == 1)
     {
         CUMask = 0xffffffff;   
