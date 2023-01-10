@@ -185,8 +185,7 @@ int main(int argc, char **argv)
 
     // for (int iter = 0; iter < mask; iter++)
     { 
-        CUMask[0] = 0x00000001;
-        CUMask[0] = 0x00000001;
+        
     if (mask == 1)
     {
         CUMask = 0xffffffff;   
