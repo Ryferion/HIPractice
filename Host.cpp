@@ -177,26 +177,25 @@ int main(int argc, char **argv)
 
     // streams
     cout << endl;
-
-    // vector <uint32_t> CUMask;
-    uint32_t CUMask = 1;
-    uint32_t CUMask_size = 2;
-    // const uint32_t CUMask_size = CUMask.size();
+    
+    vector <uint32_t> CUMask;
+    const uint32_t CUMask_size = CUMask.size();
 
     // for (int iter = 0; iter < mask; iter++)
     { 
-
+        CUMask[0] = 0x00000001;
+        CUMask[1] = 0x00000001;
     if (mask == 1)
     {
-        CUMask = 0xffffffff;   
+        CUMask[0] = 0xffffffff;   
     }
     if (mask == 44)
     {
-        CUMask = 0x0000ffff;
+        CUMask[1] = 0x0000ffff;
     }
     if (mask == 444)
     {
-        CUMask = 0xffff0000;
+        CUMask[1] = 0xffff0000;
     }
 
     // cout << " CUMask: " << std::bitset<32 * CUMask_size>(CUMask) << endl;
@@ -231,14 +230,14 @@ int main(int argc, char **argv)
     HIP_CHECK(hipMalloc((void**) &C_device, sizeof(float) * C_size));
 
     // copy data from host to device using stream...
-    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, &CUMask)); 
+    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, CUMask)); 
     
-    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, &CUMask)); 
+    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, CUMask)); 
 
     HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));
     HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMemory));
 
-    HIP_CHECK(hipExtStreamGetCUMask(streamMultiply, CUMask_size, &CUMask));
+    HIP_CHECK(hipExtStreamGetCUMask(streamMultiply, CUMask_size, CUMask));
     cout << CUMask << endl;
     cout << " CUMask: " << std::bitset<32 * 2>(CUMask) << endl;
     // set up block dim and thread dim
