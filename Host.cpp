@@ -270,16 +270,17 @@ int main(int argc, char **argv)
 
     HIP_CHECK(hipStreamSynchronize(streamMemory));
     
-    // end timer
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
-
+    
     // copy matrix data from device to host
     HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
 
     HIP_CHECK(hipStreamDestroy(streamMultiply));
     HIP_CHECK(hipStreamDestroy(streamMemory));
+
+    // end timer
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
 
     HIP_CHECK(hipFree(A_device)); // free device memory
     HIP_CHECK(hipFree(B_device)); // free device memory
