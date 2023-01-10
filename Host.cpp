@@ -206,10 +206,12 @@ int main(int argc, char **argv)
     if (mask == 44)
     {
         CUMask[0] = 0x0000ffff;
+        CUMask[1] = 0x0000ffff;
     }
     if (mask == 444)
     {
         CUMask[0] = 0xffff0000;
+        CUMask[1] = 0xffff0000;
     }
 
     // cout << " CUMask: " << std::bitset<32 * CUMask_size>(CUMask) << endl;
