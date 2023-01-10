@@ -248,8 +248,11 @@ int main(int argc, char **argv)
     HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));
     HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMemory));
 
-    HIP_CHECK(hipExtStreamGetCUMask(streamMultiply, CUMask_size, CUMask));
-    // cout << CUMask << endl;
+
+
+    uint32_t CUMask_out;
+    HIP_CHECK(hipExtStreamGetCUMask(streamMultiply, CUMask_size, CUMask_out));
+    cout << CUMask_out << endl;
     // cout << " CUMask: " << std::bitset<32 * 2>(CUMask) << endl;
 
     // set up block dim and thread dim
