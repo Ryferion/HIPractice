@@ -217,7 +217,7 @@ int main(int argc, char **argv)
     //     CUMask[1] = 0xffff0000;
     // }
 
-    cout << " CUMask: " << std::bitset<32 * CUMask_size>(currentMask) << endl;
+    cout << " CUMask: " << std::bitset<32>(currentMask) << endl;
     
     hipStream_t streamMultiply;
     hipStream_t streamMemory;
@@ -282,7 +282,8 @@ int main(int argc, char **argv)
     // end timer
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
+    // cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
+    cout << duration.count() << endl;
 
     HIP_CHECK(hipFree(A_device)); // free device memory
     HIP_CHECK(hipFree(B_device)); // free device memory
@@ -301,7 +302,7 @@ int main(int argc, char **argv)
 
     CUMask[iter/32] = CUMask[iter/32] * 2 + 1;  
     currentMask = CUMask[iter/32];
-    cout << iter << endl;
+    // cout << iter << endl;
 
     }
     return 0;
