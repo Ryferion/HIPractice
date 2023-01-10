@@ -23,6 +23,9 @@ using namespace std::chrono;
 
 __global__ void matrixMultiply(int row, int col, int out, const float *A, const float *B, float *C)
 {
+    // start timer: gear it towards important stuff
+    auto start = high_resolution_clock::now();
+
     /*
     A = row x col
     B = col x out
@@ -79,6 +82,11 @@ __global__ void matrixMultiply(int row, int col, int out, const float *A, const 
             C[yIdx * col + xIdx] = temp;
         }
     }
+
+    // end timer
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
 }
 
 void matrixWrite(int rowSize, int colSize, float *input, string fileName)
@@ -213,7 +221,7 @@ int main(int argc, char **argv)
         CUMask[0] = 0x00000000;
         CUMask[1] = 0xffff0000;
     }
-
+    
     // cout << " CUMask: " << std::bitset<32 * CUMask_size>(CUMask) << endl;
     
     hipStream_t streamMultiply;
@@ -260,9 +268,6 @@ int main(int argc, char **argv)
     // set up block dim and thread dim
     dim3 blocks(col / TILE_SIZE + 1, row / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
     dim3 threads(TILE_SIZE, TILE_SIZE, 1); // 3D dimensions of a block of threads
-
-    // start timer: gear it towards hip stuff dont care about the read/write overhead for now
-    auto start = high_resolution_clock::now();
     
     // launch kernel
     hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);
@@ -273,11 +278,6 @@ int main(int argc, char **argv)
     
     // copy matrix data from device to host
     HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
-
-    // end timer
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
 
     HIP_CHECK(hipStreamDestroy(streamMultiply));
     HIP_CHECK(hipStreamDestroy(streamMemory));
