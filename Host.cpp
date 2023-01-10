@@ -251,7 +251,7 @@ int main(int argc, char **argv)
 
 
     uint32_t CUMask_out;
-    HIP_CHECK(hipExtStreamGetCUMask(streamMultiply, CUMask_size, CUMask_out));
+    HIP_CHECK(hipExtStreamGetCUMask(streamMultiply, CUMask_size, &CUMask_out));
     cout << CUMask_out << endl;
     // cout << " CUMask: " << std::bitset<32 * 2>(CUMask) << endl;
 
