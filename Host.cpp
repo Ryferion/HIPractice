@@ -250,9 +250,10 @@ int main(int argc, char **argv)
 
 
 
-    uint32_t CUMask_out;
+    uint32_t CUMask_out[2];
     HIP_CHECK(hipExtStreamGetCUMask(streamMultiply, CUMask_size, &CUMask_out));
-    cout << CUMask_out << endl;
+    cout << CUMask_out[0] << " " << CUMask_out[1] endl;
+
     // cout << " CUMask: " << std::bitset<32 * 2>(CUMask) << endl;
 
     // set up block dim and thread dim
@@ -265,17 +266,18 @@ int main(int argc, char **argv)
     // launch kernel
     hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);
 
-    // end timer
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
-
     HIP_CHECK(hipGetLastError());
 
     HIP_CHECK(hipStreamSynchronize(streamMemory));
     
     // copy matrix data from device to host
     HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
+
+
+    // end timer
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
 
     HIP_CHECK(hipStreamDestroy(streamMultiply));
     HIP_CHECK(hipStreamDestroy(streamMemory));
