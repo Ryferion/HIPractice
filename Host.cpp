@@ -177,9 +177,11 @@ int main(int argc, char **argv)
 
     // streams
     cout << endl;
-    
-    vector <uint32_t> CUMask;
-    const uint32_t CUMask_size = CUMask.size();
+
+    // vector <uint32_t> CUMask;
+    uint32_t CUMask = 1;
+    uint32_t CUMask_size = 1;
+    // const uint32_t CUMask_size = CUMask.size();
 
     // for (int iter = 0; iter < mask; iter++)
     { 
@@ -187,15 +189,15 @@ int main(int argc, char **argv)
         CUMask[0] = 0x00000001;
     if (mask == 1)
     {
-        CUMask[0] = 0xffffffff;   
+        CUMask = 0xffffffff;   
     }
     if (mask == 44)
     {
-        CUMask[1] = 0x0000ffff;
+        CUMask = 0x0000ffff;
     }
     if (mask == 444)
     {
-        CUMask[1] = 0xffff0000;
+        CUMask = 0xffff0000;
     }
 
     // cout << " CUMask: " << std::bitset<32 * CUMask_size>(CUMask) << endl;
