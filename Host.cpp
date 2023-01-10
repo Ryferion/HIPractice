@@ -301,6 +301,7 @@ int main(int argc, char **argv)
 
     CUMask[iter/32] = CUMask[iter/32] * 2 + 1;  
     currentMask = CUMask[iter/32];
+    cout << iter << endl;
 
     }
     return 0;
