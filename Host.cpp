@@ -181,7 +181,7 @@ int main(int argc, char **argv)
     
     // vector <uint32_t> CUMask;
     uint32_t CUMask[2];
-    const uint32_t CUMask_size = 2;
+    const uint32_t CUMask_size = 32;
 
     // for (int iter = 0; iter < mask; iter++)
     { 
