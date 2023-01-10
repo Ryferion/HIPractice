@@ -233,9 +233,6 @@ int main(int argc, char **argv)
     matrixRead(matrixOne, A_host, A_size);
     matrixRead(matrixTwo, B_host, B_size);
 
-    // start timer: gear it towards hip stuff dont care about the read/write overhead for now
-    auto start = high_resolution_clock::now();
-
     // matrix multiplication
 
     // allocate memory for device
@@ -254,12 +251,21 @@ int main(int argc, char **argv)
     HIP_CHECK(hipExtStreamGetCUMask(streamMultiply, CUMask_size, CUMask));
     // cout << CUMask << endl;
     // cout << " CUMask: " << std::bitset<32 * 2>(CUMask) << endl;
+
     // set up block dim and thread dim
     dim3 blocks(col / TILE_SIZE + 1, row / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
     dim3 threads(TILE_SIZE, TILE_SIZE, 1); // 3D dimensions of a block of threads
 
+    // start timer: gear it towards hip stuff dont care about the read/write overhead for now
+    auto start = high_resolution_clock::now();
+    
     // launch kernel
     hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);
+
+    // end timer
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
 
     HIP_CHECK(hipGetLastError());
 
@@ -286,11 +292,6 @@ int main(int argc, char **argv)
     HIP_CHECK(hipHostFree(B_host)); // free pinned memory
     HIP_CHECK(hipHostFree(C_host)); // free pinned memory
 
-    // end timer
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by function: " << duration.count() << " microseconds" << endl;
-    // cout << duration.count() << endl;
     // CUMask = CUMask * 2 + 1;  
     }
     return 0;
