@@ -178,7 +178,8 @@ int main(int argc, char **argv)
     // streams
     cout << endl;
     
-    vector <uint32_t> CUMask;
+    // vector <uint32_t> CUMask;
+    uint32_t CUMask[2];
     const uint32_t CUMask_size = CUMask.size();
 
     // for (int iter = 0; iter < mask; iter++)
