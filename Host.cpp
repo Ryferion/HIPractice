@@ -190,7 +190,7 @@ int main(int argc, char **argv)
 
     if (mask == 1)
     {
-        CUMask[0] = 0xffffffff; 
+        CUMask[0] = 0x00000001; 
         CUMask[1] = 0x00000000;  
     }
     if (mask == 2)
