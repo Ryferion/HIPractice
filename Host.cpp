@@ -206,16 +206,16 @@ int main(int argc, char **argv)
     //     CUMask[1] = 0xffffffff;  
     // }
 
-    // if (mask == 44)
-    // {
-    //     CUMask[0] = 0x00000000;
-    //     CUMask[1] = 0x0000ffff;
-    // }
-    // if (mask == 444)
-    // {
-    //     CUMask[0] = 0x00000000;
-    //     CUMask[1] = 0xffff0000;
-    // }
+    if (mask == 44)
+    {
+        CUMask[0] = 0xffffffff;
+        CUMask[1] = 0x00000000;
+    }
+    if (mask == 444)
+    {
+        CUMask[0] = 0x00000000;
+        CUMask[1] = 0xffffffff;
+    }
 
     // cout << " CUMask: " << std::bitset<32>(currentMask) << endl;
     
@@ -234,7 +234,6 @@ int main(int argc, char **argv)
     HIP_CHECK(hipHostMalloc((void**) &B_host, sizeof(float) * B_size));
     HIP_CHECK(hipHostMalloc((void**) &C_host, sizeof(float) * C_size));
     
-
     matrixRead(matrixOne, A_host, A_size);
     matrixRead(matrixTwo, B_host, B_size);
 
@@ -247,7 +246,6 @@ int main(int argc, char **argv)
 
     // copy data from host to device using stream...
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, CUMask)); 
-    
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, CUMask)); 
 
     HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));

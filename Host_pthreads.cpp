@@ -144,8 +144,12 @@ void* hip(void *args)
     { 
 
     // memory related variables
-    uint32_t CUMask = 1;
-    const uint32_t CUMask_size = 1;
+    uint32_t CUMask[2];
+    const uint32_t CUMask_size = 2;
+
+    CUMask[0] = 0x00000001;
+    CUMask[1] = 0x00000001; 
+
     float *A_host, *B_host, *C_host;
     float *A_device, *B_device, *C_device;
     size_t A_size, B_size, C_size;
@@ -158,11 +162,13 @@ void* hip(void *args)
 
     if (mask == 44)
     {
-        CUMask = 0x0000ffff;
+        CUMask[0] = 0xffffffff;
+        CUMask[1] = 0x00000000;
     }
     if (mask == 444)
     {
-        CUMask = 0xffff0000;
+        CUMask[0] = 0x00000000;
+        CUMask[1] = 0xffffffff;
     }
 
     // print mask to check
@@ -189,9 +195,6 @@ void* hip(void *args)
     matrixRead(matrixOne, A_host, A_size);
     matrixRead(matrixTwo, B_host, B_size);
 
-    // start timer: gear it towards hip stuff dont care about the read/write overhead for now
-    auto start = high_resolution_clock::now();
-
     // matrix multiplication
 
     // allocate memory for device
@@ -200,8 +203,8 @@ void* hip(void *args)
     HIP_CHECK(hipMalloc((void**) &C_device, sizeof(float) * C_size));
 
     // copy data from host to device using stream...
-    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, &CUMask)); 
-    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, &CUMask)); 
+    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, CUMask)); 
+    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, CUMask)); 
 
     HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));
     HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMemory));
@@ -209,6 +212,9 @@ void* hip(void *args)
     // set up block dim and thread dim
     dim3 blocks(col / TILE_SIZE + 1, row / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
     dim3 threads(TILE_SIZE, TILE_SIZE, 1); // 3D dimensions of a block of threads
+
+    // start timer: gear it towards kernel stuff
+    auto start = high_resolution_clock::now();
 
     // launch kernel
     hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);
@@ -326,7 +332,7 @@ int main(int argc, char **argv)
     pthread_join(pthread_id, NULL);
     cout << "threads done" << endl;
     // pthread_exit(NULL);
-    // free(firstHalf);
-    // free(secondHalf);
+    free(firstHalf);
+    free(secondHalf);
     return 0;
 }
