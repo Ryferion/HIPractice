@@ -162,13 +162,13 @@ void* hip(void *args)
 
     if (mask == 44)
     {
-        CUMask[0] = 0xffffffff;
+        CUMask[0] = 0x3fffffff;
         CUMask[1] = 0x00000000;
     }
     if (mask == 444)
     {
         CUMask[0] = 0x00000000;
-        CUMask[1] = 0xffffffff;
+        CUMask[1] = 0x3fffffff;
     }
 
     // print mask to check
@@ -247,7 +247,7 @@ void* hip(void *args)
     // end timer
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by function: " << duration.count() << " microseconds, with CU mask " << std::bitset<32>(CUMask[0]) << std::bitset<32>(CUMask[1]) <<  endl;
+    cout << "Time taken by function: " << duration.count() << " microseconds, with CU mask " << std::bitset<30>(CUMask[0]) << std::bitset<30>(CUMask[1]) <<  endl;
     // cout << duration.count() << endl;
 
     }
