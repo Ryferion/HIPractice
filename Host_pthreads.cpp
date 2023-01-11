@@ -157,7 +157,7 @@ void* hip(void *args)
     // set mask stuff
     if (iter != 0)
     {
-        CUMask = CUMask * 2 + 1;  
+        // CUMask = CUMask * 2 + 1;  
     }
 
     if (mask == 44)
