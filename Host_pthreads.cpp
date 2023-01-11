@@ -247,7 +247,7 @@ void* hip(void *args)
     // end timer
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by function: " << duration.count() << " microseconds, with CU mask " << CUMask[0] << CUMask[1] <<  endl;
+    cout << "Time taken by function: " << duration.count() << " microseconds, with CU mask " << std::bitset<32>(CUMask[0]) << std::bitset<32>(CUMask[1]) <<  endl;
     // cout << duration.count() << endl;
 
     }
