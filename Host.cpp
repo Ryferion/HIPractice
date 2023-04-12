@@ -175,6 +175,7 @@ int main(int argc, char **argv)
     cout << " Current Device: " << deviceID << endl;
     cout << " CU count: " << deviceProps.multiProcessorCount << endl;
     rsmi_status_t ret;
+    rsmi_gpu_metrics_t p;
 
     ret = rsmi_init(0);
     CHK_RSMI_RET_I(ret)
