@@ -178,7 +178,7 @@ int main(int argc, char **argv)
 
     ret = rsmi_init(0);
     CHK_RSMI_RET_I(ret)
-    ret = rsmi_dev_gpu_metrics_info_get(i, &p);
+    ret = rsmi_dev_gpu_metrics_info_get(DEVICE_NUM, &p);
     CHK_RSMI_RET(ret)
     std::cout << "\t**GPU METRICS" << std::endl;
 
