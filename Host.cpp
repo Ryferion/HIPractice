@@ -6,9 +6,10 @@
 #include <vector>
 
 #include "hip/hip_runtime.h"
+#include "rocm_smi/rocm_smi.h"
 
 #define __HIP_PLATFORM_HCC__
-#define DEVICE_NUM 2
+#define DEVICE_NUM 7
 #define TILE_SIZE 16
 
 using namespace std;
@@ -20,6 +21,12 @@ using namespace std::chrono;
     if (status != hipSuccess) {     \
         std::cerr << "Error: HIP reports " << hipGetErrorString(status) << std::endl;   \
         std::abort(); } }
+
+__global__ void otherFcn(int row, int col, int out, const float *A, const float *B, float *C)
+{
+    
+
+}
 
 __global__ void matrixMultiply(int row, int col, int out, const float *A, const float *B, float *C)
 {
@@ -144,6 +151,15 @@ int main(int argc, char **argv)
         return 0;
     }
 
+    rsmi_status_t ret;
+
+    ret = rsmi_init(0);
+    CHK_RSMI_RET_I(ret)
+    ret = rsmi_dev_gpu_metrics_info_get(i, &p);
+    CHK_RSMI_RET(ret)
+    std::cout << "\t**GPU METRICS" << std::endl;
+
+
     float *A_host, *B_host, *C_host;
     float *A_device, *B_device, *C_device;
     size_t A_size, B_size, C_size;
@@ -208,13 +224,13 @@ int main(int argc, char **argv)
 
     if (mask == 44)
     {
-        CUMask[0] = 0xffffffff;
+        CUMask[0] = 0x3fffffff;
         CUMask[1] = 0x00000000;
     }
     if (mask == 444)
     {
         CUMask[0] = 0x00000000;
-        CUMask[1] = 0xffffffff;
+        CUMask[1] = 0x3fffffff;
     }
 
     // cout << " CUMask: " << std::bitset<32>(currentMask) << endl;
@@ -263,6 +279,7 @@ int main(int argc, char **argv)
     // start timer: gear it towards important stuff
     auto start = high_resolution_clock::now();
 
+    cout << "----------Kernel Launch----------\n";
     // launch kernel
     hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);
 
