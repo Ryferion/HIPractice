@@ -9,7 +9,7 @@
 #include "rocm_smi/rocm_smi.h"
 
 #define __HIP_PLATFORM_HCC__
-#define DEVICE_NUM 7
+#define DEVICE_NUM 2
 #define TILE_SIZE 16
 
 using namespace std;
@@ -146,11 +146,6 @@ int main(int argc, char **argv)
 
     cout << " Current Device: " << deviceID << endl;
     cout << " CU count: " << deviceProps.multiProcessorCount << endl;
-    if (deviceID != 2)
-    {
-        return 0;
-    }
-
     rsmi_status_t ret;
 
     ret = rsmi_init(0);
