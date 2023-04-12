@@ -22,11 +22,39 @@ using namespace std::chrono;
         std::cerr << "Error: HIP reports " << hipGetErrorString(status) << std::endl;   \
         std::abort(); } }
 
-__global__ void otherFcn(int row, int col, int out, const float *A, const float *B, float *C)
-{
-    
 
+#define PRINT_RSMI_ERR(RET) { \
+  if (RET != RSMI_STATUS_SUCCESS) { \
+    const char *err_str; \
+    std::cout << "RSMI call returned " << (RET) \
+      << " at line " << __LINE__ << std::endl; \
+      rsmi_status_string((RET), &err_str); \
+      std::cout << err_str << std::endl; \
+  } \
 }
+
+#define CHK_RSMI_RET(RET) { \
+  PRINT_RSMI_ERR(RET) \
+  if (RET != RSMI_STATUS_SUCCESS) { \
+    return (RET); \
+  } \
+}
+
+#define CHK_RSMI_RET_I(RET) { \
+  PRINT_RSMI_ERR(RET) \
+  if (RET != RSMI_STATUS_SUCCESS) { \
+    return static_cast<int>(RET); \
+  } \
+}
+
+#define CHK_RSMI_PERM_RET(RET) { \
+    if ((RET) == RSMI_STATUS_PERMISSION) { \
+      std::cout << "This command requires root access." << std::endl; \
+    } else { \
+      CHK_RSMI_RET_I(RET) \
+    } \
+}
+
 
 __global__ void matrixMultiply(int row, int col, int out, const float *A, const float *B, float *C)
 {
