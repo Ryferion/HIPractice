@@ -2,5 +2,5 @@
 rm -fr build
 mkdir build
 cd build
-cmake -D__HIP_PLATFORM_AMD__ ..
+cmake ..
 make VERBOSE=1 -j 1

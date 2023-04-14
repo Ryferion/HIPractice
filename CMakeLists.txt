@@ -28,9 +28,11 @@ if(DEFINED ENV{ROCM_PATH})
 	endif(RSMI_LIB_DIR)
 
 
-	add_executable(hostBuilt Host.cpp)
+	add_executable(hostBuilt "Host.cpp")
 	set_target_properties(hostBuilt PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 	
+	set(CMAKE_C_FLAGS "-D__HIP_PLATFORM_AMD__")
+	set(CMAKE_CXX_FLAGS "-D__HIP_PLATFORM_AMD__")
 	# target_link_libraries(hostBuilt HIP)
 	target_link_libraries(hostBuilt hip)
 	target_link_libraries(hostBuilt rocm_smi)
