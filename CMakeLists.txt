@@ -18,4 +18,9 @@ if(DEFINED ENV{ROCM_PATH})
 		message(STATUS "RSMI_LIB_DIR found")
 	endif(RSMI_LIB_DIR)
 
+	target_link_libraries()
+
+	add_executable(hostBuilt Host.cpp)
+	set_target_properties(hostBuilt PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
+	
 endif(DEFINED ENV{ROCM_PATH})
