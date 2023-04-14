@@ -19,8 +19,6 @@ if(DEFINED ENV{ROCM_PATH})
 	if (HIP_FOUND)
 		message(STATUS "HIP found")
 	endif(HIP_FOUND)
-	message("--------hip Lib Dir: " hip)
-	message("--------HIP Lib Dir: " HIP)
 
 
 	find_package(rocm_smi REQUIRED)
@@ -40,8 +38,11 @@ if(DEFINED ENV{ROCM_PATH})
 	
 	set(CMAKE_C_FLAGS "-D__HIP_PLATFORM_AMD__")
 	set(CMAKE_CXX_FLAGS "-D__HIP_PLATFORM_AMD__")
+	set_property(TARGET Server PROPERTY CXX_STANDARD 17)
+	set_source_files_properties("Host.cpp" PROPERTIES HIP_SOURCE_PROPERTY_FORMAT 1)
 
 	target_link_libraries(hostBuilt HIP)
 	target_link_libraries(hostBuilt hip)
 	target_link_libraries(hostBuilt rocm_smi)
+
 endif(DEFINED ENV{ROCM_PATH})
