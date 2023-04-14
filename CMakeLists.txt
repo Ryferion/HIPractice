@@ -11,15 +11,22 @@ if(DEFINED ENV{ROCM_PATH})
 	list(APPEND CMAKE_PREFIX_PATH "/home/rquac004/rocm.bkup/rocdl/lib/cmake/AMDDeviceLibs")
 	list(APPEND CMAKE_PREFIX_PATH "/home/rquac004/.opt/rocm/hip")
 
-	# find_package(HIP REQUIRED)
+	find_package(HIP REQUIRED)
 	find_package(hip REQUIRED)
-	find_package(rocm_smi REQUIRED)
+	if (hip_FOUND)
+		message(STATUS "hip found")
+	endif(hip_FOUND)
+	if (HIP_FOUND)
+		message(STATUS "HIP found")
+	endif(HIP_FOUND)
+	message("--------hip Lib Dir: " hip)
+	message("--------HIP Lib Dir: " HIP)
 
+
+	find_package(rocm_smi REQUIRED)
 	set(RSMI_INC_DIR ${ROCM_DIR}/include)
 	set(RSMI_LIB_DIR ${ROCM_DIR}/lib)
-
 	message("--------RSMI Lib Dir: " ${RSMI_LIB_DIR})
-
 	if (RSMI_INC_DIR)
 		message(STATUS "RSMI_INC_DIR found")
 	endif(RSMI_INC_DIR)
@@ -33,7 +40,8 @@ if(DEFINED ENV{ROCM_PATH})
 	
 	set(CMAKE_C_FLAGS "-D__HIP_PLATFORM_AMD__")
 	set(CMAKE_CXX_FLAGS "-D__HIP_PLATFORM_AMD__")
-	# target_link_libraries(hostBuilt HIP)
+
+	target_link_libraries(hostBuilt HIP)
 	target_link_libraries(hostBuilt hip)
 	target_link_libraries(hostBuilt rocm_smi)
 endif(DEFINED ENV{ROCM_PATH})
