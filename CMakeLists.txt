@@ -3,9 +3,12 @@ set(CMAKE_BUILD_TYPE Release)
 set(GPU_TARGETS "gfx906" CACHE STRING "GPU targets to compile for")
 
 if(DEFINED ENV{ROCM_PATH})
+	message(STATUS "CMaking Now")
 	list(APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH})
 
+	find_package(hip REQUIRED)
 	find_package(rocm_smi REQUIRED)
+
 	set(RSMI_INC_DIR ${ROCM_DIR}/include)
 	set(RSMI_LIB_DIR ${ROCM_DIR}/lib)
 
