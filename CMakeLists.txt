@@ -2,12 +2,16 @@ cmake_minimum_required(VERSION 3.5...3.22)
 set(CMAKE_BUILD_TYPE Release)
 set(GPU_TARGETS "gfx906" CACHE STRING "GPU targets to compile for")
 
+project (hostTest) 
+message(STATUS "CMaking Now")
+
 if(DEFINED ENV{ROCM_PATH})
 	message(STATUS "CMaking Now")
 	list(APPEND CMAKE_PREFIX_PATH $ENV{ROCM_PATH})
 	list(APPEND CMAKE_PREFIX_PATH "/home/rquac004/rocm.bkup/comgr")
 	list(APPEND CMAKE_PREFIX_PATH "/home/rquac004/rocm.bkup/rocdl/lib/cmake/AMDDeviceLibs")
-	
+	list(APPEND CMAKE_PREFIX_PATH "/home/rquac004/.opt/rocm/hip")
+
 	find_package(HIP REQUIRED)
 	find_package(hip REQUIRED)
 	find_package(rocm_smi REQUIRED)
