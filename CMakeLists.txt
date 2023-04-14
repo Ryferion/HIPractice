@@ -8,6 +8,7 @@ if(DEFINED ENV{ROCM_PATH})
 	list(APPEND CMAKE_PREFIX_PATH "/home/rquac004/rocm.bkup/comgr")
 	list(APPEND CMAKE_PREFIX_PATH "/home/rquac004/rocm.bkup/rocdl/lib/cmake/AMDDeviceLibs")
 	
+	find_package(HIP REQUIRED)
 	find_package(hip REQUIRED)
 	find_package(rocm_smi REQUIRED)
 

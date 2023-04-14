@@ -3,4 +3,4 @@ rm -fr build
 mkdir build
 cd build
 cmake ..
-make -j 1
+make VERBOSE=1 -j 1
