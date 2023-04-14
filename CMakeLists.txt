@@ -3,7 +3,6 @@ set(CMAKE_BUILD_TYPE Release)
 set(GPU_TARGETS "gfx906" CACHE STRING "GPU targets to compile for")
 
 project (hostTest) 
-message(STATUS "CMaking Now")
 
 if(DEFINED ENV{ROCM_PATH})
 	message(STATUS "CMaking Now")
@@ -12,7 +11,7 @@ if(DEFINED ENV{ROCM_PATH})
 	list(APPEND CMAKE_PREFIX_PATH "/home/rquac004/rocm.bkup/rocdl/lib/cmake/AMDDeviceLibs")
 	list(APPEND CMAKE_PREFIX_PATH "/home/rquac004/.opt/rocm/hip")
 
-	find_package(HIP REQUIRED)
+	# find_package(HIP REQUIRED)
 	find_package(hip REQUIRED)
 	find_package(rocm_smi REQUIRED)
 
@@ -28,9 +27,11 @@ if(DEFINED ENV{ROCM_PATH})
 		message(STATUS "RSMI_LIB_DIR found")
 	endif(RSMI_LIB_DIR)
 
-	# target_link_libraries()
 
 	add_executable(hostBuilt Host.cpp)
 	set_target_properties(hostBuilt PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 	
+	# target_link_libraries(hostBuilt HIP)
+	target_link_libraries(hostBuilt hip)
+	target_link_libraries(hostBuilt rocm_smi)
 endif(DEFINED ENV{ROCM_PATH})
