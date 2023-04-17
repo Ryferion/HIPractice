@@ -318,9 +318,9 @@ int main(int argc, char **argv)
     int maxIter = 1;
     int row, col, out;
     string matrixOne, matrixTwo, matrixThree;
-        row = 8;
-        col = 8;
-        out = 8;
+        row = 4096;
+        col = 4096;
+        out = 4096;
         matrixOne = "matrix1.txt";
         matrixTwo = "matrix2.txt";
         matrixThree = "matrix3.txt";
@@ -356,6 +356,7 @@ int main(int argc, char **argv)
         mainThread->arg_secondMatrix = matrixTwo;
         mainThread->arg_thirdMatrix = matrixThree;
 
+        // power thread
         struct powerArgs *powerThread = (struct powerArgs *) malloc(sizeof(struct powerArgs));
         powerThread->arg_mask1 = firstMask;
         powerThread->arg_mask2 = secondMask;
