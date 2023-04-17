@@ -40,10 +40,10 @@ using namespace std::chrono;
   } \
 }
 
+// return static_cast<int>(RET); 
 #define CHK_RSMI_RET_I(RET) { \
   PRINT_RSMI_ERR(RET) \
   if (RET != RSMI_STATUS_SUCCESS) { \
-    // return static_cast<int>(RET); 
     return (RET); \
   } \
 }
