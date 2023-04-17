@@ -45,10 +45,10 @@ if(DEFINED ENV{ROCM_PATH})
         include_directories(${RSMI_LIB_DIR})
 
         set(RSMI_LIBS rocm_smi64)
-        add_executable(hostBuilt "Host.cpp")
+        add_executable(hostBuilt "CUMaskPower.cpp")
         set_target_properties(hostBuilt PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
         set_property(TARGET hostBuilt PROPERTY CXX_STANDARD 17)
-        set_source_files_properties("Host.cpp" PROPERTIES HIP_SOURCE_PROPERTY_FORMAT 1)
+        set_source_files_properties("CUMaskPower.cpp" PROPERTIES HIP_SOURCE_PROPERTY_FORMAT 1)
 
         #target_link_libraries(hostBuilt ${rocm_smi})
         target_link_libraries(hostBuilt ${RSMI_LIB_DIR}/librocm_smi64.so)

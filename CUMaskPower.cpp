@@ -9,7 +9,7 @@
 #include "rocm_smi/rocm_smi.h"
 
 #define __HIP_PLATFORM_HCC__
-#define DEVICE_NUM 2
+#define DEVICE_NUM 0
 #define TILE_SIZE 16
 
 using namespace std;
@@ -152,13 +152,33 @@ void matrixRead(string fileName, float *readTo, int size)
     }
 }
 
-void* powerCheck(void *args)
-{
-    
+struct powerArgs {
+    int arg_mask1;
+    int arg_mask2;
 }
 
-struct arguments {
-    int arg_mask;
+void* powerCheck(void *args)
+{
+    struct powerArgs *inputArgs = (struct hipArgs*) args;
+    int mask1 = inputArgs->arg_mask1;
+    int mask2 = inputArgs->arg_mask2;
+
+    rsmi_status_t ret;
+    uint64_t val_ui64, val2_ui64;
+
+    ret = rsmi_init(0);
+    ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
+    CHK_RSMI_PERM_RET(ret)
+
+    std::cout << "\t**Averge Power Usage: ";
+    std::cout << static_cast<float>(val_ui64)/1000 << " W" << std::endl;
+
+    return NULL;
+}
+
+struct hipArgs {
+    int arg_mask1;
+    int arg_mask2;
     int arg_row;
     int arg_col;
     int arg_out;
@@ -169,8 +189,9 @@ struct arguments {
 
 void* hip(void *args)
 {
-    struct arguments *inputArgs = (struct arguments*) args;
-    int mask = inputArgs->arg_mask;
+    struct hipArgs *inputArgs = (struct hipArgs*) args;
+    int mask1 = inputArgs->arg_mask1;
+    int mask2 = inputArgs->arg_mask2;
     int row = inputArgs->arg_row;
     int col = inputArgs->arg_row;
     int out = inputArgs->arg_out;
@@ -184,29 +205,23 @@ void* hip(void *args)
     uint32_t CUMask[2];
     const uint32_t CUMask_size = 2;
 
-    CUMask[0] = 0x00000001;
-    CUMask[1] = 0x00000001; 
+    // just in case i stupidly put mask as 0
+    {
+        CUMask[0] = 0x00000001;
+        CUMask[1] = 0x00000001; 
+    }
+    if (mask1 <= 32)
+    {   
+        CUMask[0] = mask1;
+    }
+    if (mask2 <= 32)
+    {
+        CUMask[1] = mask2; 
+    }
 
     float *A_host, *B_host, *C_host;
     float *A_device, *B_device, *C_device;
     size_t A_size, B_size, C_size;
-
-    // set mask stuff
-    if (iter != 0)
-    {
-        // CUMask = CUMask * 2 + 1;  
-    }
-
-    if (mask == 44)
-    {
-        CUMask[0] = 0x3fffffff;
-        CUMask[1] = 0x00000000;
-    }
-    if (mask == 444)
-    {
-        CUMask[0] = 0x00000000;
-        CUMask[1] = 0x3fffffff;
-    }
 
     // print mask to check
     // cout << " CUMask: " << std::bitset<32>(CUMask) << endl;
@@ -283,16 +298,9 @@ void* hip(void *args)
 
 int main(int argc, char **argv)
 {
-    cout << "C++ version: ";
-    if (__cplusplus == 201703L) std::cout << "C++17\n";
-    else if (__cplusplus == 201402L) std::cout << "C++14\n";
-    else if (__cplusplus == 201103L) std::cout << "C++11\n";
-    else if (__cplusplus == 199711L) std::cout << "C++98\n";
-    else std::cout << "pre-standard C++\n";
-
     int deviceCount = -1, deviceID = -1, CUCount = -1;
 
-    HIP_CHECK(hipSetDevice(DEVICE_NUM)); // use GPU 2
+    HIP_CHECK(hipSetDevice(DEVICE_NUM));
     HIP_CHECK(hipGetDevice(&deviceID)); 
     HIP_CHECK(hipGetDeviceCount(&deviceCount)); // how many devices there be (should be 8 on idk)
     
@@ -301,10 +309,6 @@ int main(int argc, char **argv)
 
     cout << " Current Device: " << deviceID << endl;
     cout << " CU count: " << deviceProps.multiProcessorCount << endl;
-    if (deviceID != 2)
-    {
-        return 0;
-    }
 
     /*
     A = row x col
@@ -313,6 +317,7 @@ int main(int argc, char **argv)
     */
 
     int mask = 1;
+    int maxIter = 1;
     int row, col, out;
     string matrixOne, matrixTwo, matrixThree;
         row = 8;
@@ -331,35 +336,53 @@ int main(int argc, char **argv)
 
     if (argv[2] != NULL)
     {
-        mask = atoi(argv[2]);
+        maxIter = atoi(argv[2]);
     }
 
-    // thread 1
-    pthread_t pthread_id;
-    struct arguments *firstHalf = (struct arguments *) malloc(sizeof(struct arguments));
-    firstHalf->arg_mask = 44;
-    firstHalf->arg_row = row;
-    firstHalf->arg_col = col;
-    firstHalf->arg_out = out;
-    firstHalf->arg_firstMatrix = matrixOne;
-    firstHalf->arg_secondMatrix = matrixTwo;
-    firstHalf->arg_thirdMatrix = matrixThree;
+    int firstMask, secondMask;
 
-    struct arguments *secondHalf = (struct arguments *) malloc(sizeof(struct arguments));
-    secondHalf->arg_mask = 444;
-    secondHalf->arg_row = row;
-    secondHalf->arg_col = col;
-    secondHalf->arg_out = out;
-    secondHalf->arg_firstMatrix = matrixOne;
-    secondHalf->arg_secondMatrix = matrixTwo;
-    secondHalf->arg_thirdMatrix = matrixThree;
+    firstMask = 1;
+    secondMask = 1;
 
-    pthread_create(&pthread_id, NULL, &hip, (void *)firstHalf);
-    pthread_create(&pthread_id, NULL, &hip, (void *)secondHalf);
-    pthread_join(pthread_id, NULL);
+    for (int iter = 0; iter < maxIter; iter++)
+    {
+        // process thread
+        pthread_t pthread_id;
+        struct hipArgs *mainThread = (struct hipArgs *) malloc(sizeof(struct hipArgs));
+        mainThread->arg_mask1 = firstMask;
+        mainThread->arg_mask2 = secondMask;
+        mainThread->arg_row = row;
+        mainThread->arg_col = col;
+        mainThread->arg_out = out;
+        mainThread->arg_firstMatrix = matrixOne;
+        mainThread->arg_secondMatrix = matrixTwo;
+        mainThread->arg_thirdMatrix = matrixThree;
 
-    // pthread_exit(NULL);
-    free(firstHalf);
-    free(secondHalf);
+        struct powerArgs *powerThread = (struct powerArgs *) malloc(sizeof(struct powerArgs));
+        powerThread->arg_mask1 = firstMask;
+        powerThread->arg_mask2 = secondMask;
+
+        pthread_create(&pthread_id, NULL, &hip, (void *)mainThread);
+        pthread_create(&pthread_id, NULL, &hip, (void *)powerThread);
+        pthread_join(pthread_id, NULL);
+
+        // pthread_exit(NULL);
+        free(mainThread);
+        free(powerThread);
+
+        if (firstMask <= 32)
+        {
+            firstMask++;
+        }
+        elseif (secondMask <= 32)
+        {
+            secondMask++;
+        }
+        else
+        {
+            std::cout << "Maximum iterations reached\n";
+        }
+    }
+    
     return 0;
 }
