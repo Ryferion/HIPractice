@@ -157,7 +157,7 @@ struct powerArgs {
     int arg_mask2;
 };
 
-void* powerCheck(void *args)
+int* powerCheck(void *args)
 {
     struct powerArgs *inputArgs = (struct powerArgs*) args;
     int mask1 = inputArgs->arg_mask1;
