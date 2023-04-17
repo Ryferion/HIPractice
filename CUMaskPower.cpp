@@ -168,13 +168,13 @@ void* powerCheck(void *args)
     rsmi_gpu_metrics_t p;
 
     ret = rsmi_init(0);
-    CHK_RSMI_RET_I(ret)
+    // CHK_RSMI_RET_I(ret)
     ret = rsmi_dev_gpu_metrics_info_get(DEVICE_NUM, &p);
-    CHK_RSMI_RET(ret)
+    // CHK_RSMI_RET(ret)
     std::cout << "\t**GPU METRICS" << std::endl;
 
     ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
-    CHK_RSMI_PERM_RET(ret)
+    // CHK_RSMI_PERM_RET(ret)
     std::cout << "\t**Averge Power Usage: ";
     std::cout << static_cast<float>(val_ui64)/1000 << " W" << std::endl;
     std::cout << "\t=======" << std::endl;
