@@ -6,6 +6,7 @@ cd build
 cmake .. -DCMAKE_CXX_COMPILER=/home/rquac004/.opt/rocm/bin/hipcc
 make VERBOSE=1 -j 1
 
+cd ..
 cp matrix1.txt build/bin
 cp matrix2.txt build/bin
 cp matrix3.txt build/bin
