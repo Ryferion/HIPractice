@@ -43,7 +43,8 @@ using namespace std::chrono;
 #define CHK_RSMI_RET_I(RET) { \
   PRINT_RSMI_ERR(RET) \
   if (RET != RSMI_STATUS_SUCCESS) { \
-    return static_cast<int>(RET); \
+    // return static_cast<int>(RET); 
+    return (RET); \
   } \
 }
 
@@ -157,7 +158,7 @@ struct powerArgs {
     int arg_mask2;
 };
 
-int powerCheck(void *args)
+void* powerCheck(void *args)
 {
     struct powerArgs *inputArgs = (struct powerArgs*) args;
     int mask1 = inputArgs->arg_mask1;
@@ -173,7 +174,7 @@ int powerCheck(void *args)
     std::cout << "\t**Averge Power Usage: ";
     std::cout << static_cast<float>(val_ui64)/1000 << " W" << std::endl;
 
-    return -1;
+    return NULL;
 }
 
 struct hipArgs {
