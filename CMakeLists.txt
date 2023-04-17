@@ -38,7 +38,7 @@ if(DEFINED ENV{ROCM_PATH})
 	
 	set(CMAKE_C_FLAGS "-D__HIP_PLATFORM_AMD__")
 	set(CMAKE_CXX_FLAGS "-D__HIP_PLATFORM_AMD__")
-	set_property(TARGET Server PROPERTY CXX_STANDARD 17)
+	set_property(TARGET hostBuilt PROPERTY CXX_STANDARD 17)
 	set_source_files_properties("Host.cpp" PROPERTIES HIP_SOURCE_PROPERTY_FORMAT 1)
 
 	target_link_libraries(hostBuilt HIP)
