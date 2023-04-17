@@ -26,13 +26,29 @@ if(DEFINED ENV{ROCM_PATH})
 	target_link_libraries(rsmiLib hip::device)
 	set_target_properties(rsmiLib PROPERTIES LINKER_LANGUAGE CXX)
 
+	set(RSMI_INC_DIR ${rocm_smi_DIR}/include)
+	set(RSMI_LIB_DIR ${rocm_smi_DIR}/lib)
+
+	# Determine RSMI Header files are present
+	#  (no external source dependencies)
+	# Determine RSMI Library file is present
+	if(NOT EXISTS ${RSMI_LIB_DIR}/librocm_smi32.so)
+		message("ERROR: ${RSMI_LIB_DIR}/librocm_smi32.so doesn't exist. Check value of ROCM_DIR define")
+		return()
+	endif()
+	else()
+	if(NOT EXISTS ${RSMI_LIB_DIR}/librocm_smi64.so)
+		message("ERROR: Define RSMI_LIB_DIR pointing to RSMI library is not set")
+		message(" missing: ${RSMI_LIB_DIR}/librocm_smi64.so")
+		return()
+	endif()
+
 	add_executable(hostBuilt "Host.cpp")
 	set_target_properties(hostBuilt PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin")
 	set_property(TARGET hostBuilt PROPERTY CXX_STANDARD 17)
 	set_source_files_properties("Host.cpp" PROPERTIES HIP_SOURCE_PROPERTY_FORMAT 1)
 
-	# target_link_libraries(hostBuilt hipLib)
-	# target_link_libraries(hostBuilt HIPLib)
-	# target_link_libraries(hostBuilt RSMI_LIB_DIR)
+	target_link_libraries(hostBuilt ${RSMI_INC_DIR})
+	target_link_libraries(hostBuilt ${RSMI_LIB_DIR})
 
 endif(DEFINED ENV{ROCM_PATH})
