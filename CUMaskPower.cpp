@@ -155,25 +155,23 @@ void matrixRead(string fileName, float *readTo, int size)
 struct powerArgs {
     int arg_mask1;
     int arg_mask2;
-}
+};
 
 void* powerCheck(void *args)
 {
-    struct powerArgs *inputArgs = (struct hipArgs*) args;
+    struct powerArgs *inputArgs = (struct powerArgs*) args;
     int mask1 = inputArgs->arg_mask1;
     int mask2 = inputArgs->arg_mask2;
 
     rsmi_status_t ret;
     uint64_t val_ui64, val2_ui64;
 
-    ret = rsmi_init(0);
     ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
     CHK_RSMI_PERM_RET(ret)
-
     std::cout << "\t**Averge Power Usage: ";
     std::cout << static_cast<float>(val_ui64)/1000 << " W" << std::endl;
 
-    return NULL;
+    return
 }
 
 struct hipArgs {
@@ -374,7 +372,7 @@ int main(int argc, char **argv)
         {
             firstMask++;
         }
-        elseif (secondMask <= 32)
+        else if (secondMask <= 32)
         {
             secondMask++;
         }
