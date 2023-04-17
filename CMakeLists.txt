@@ -14,15 +14,15 @@ if(DEFINED ENV{ROCM_PATH})
 	list(APPEND CMAKE_PREFIX_PATH "/home/rquac004/.opt/rocm/hip")
 
 	find_package(hip REQUIRED)
+	add_library(hipLib ...)
 	if (hip_FOUND)
 		message(STATUS "hip found")
-		add_library(hipLib hip)
 	endif(hip_FOUND)
 
 	find_package(HIP REQUIRED)
+	add_library(HIPLib ...)
 	if (HIP_FOUND)
 		message(STATUS "HIP found")
-		add_library(HIPLib HIP)
 	endif(HIP_FOUND)
 
 	find_package(rocm_smi REQUIRED)
