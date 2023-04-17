@@ -171,7 +171,7 @@ void* powerCheck(void *args)
     std::cout << "\t**Averge Power Usage: ";
     std::cout << static_cast<float>(val_ui64)/1000 << " W" << std::endl;
 
-    return
+    return NULL;
 }
 
 struct hipArgs {
