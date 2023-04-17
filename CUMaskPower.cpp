@@ -165,6 +165,8 @@ void* powerCheck(void *args)
 
     rsmi_status_t ret;
     uint64_t val_ui64, val2_ui64;
+    val_ui64 = 0;
+    val2_ui64 = 0;
 
     ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
     // CHK_RSMI_PERM_RET(ret)
