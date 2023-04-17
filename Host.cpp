@@ -175,6 +175,7 @@ int main(int argc, char **argv)
     cout << " Current Device: " << deviceID << endl;
     cout << " CU count: " << deviceProps.multiProcessorCount << endl;
     rsmi_status_t ret;
+    uint64_t val_ui64, val2_ui64;
     rsmi_gpu_metrics_t p;
 
     ret = rsmi_init(0);
@@ -183,7 +184,7 @@ int main(int argc, char **argv)
     CHK_RSMI_RET(ret)
     std::cout << "\t**GPU METRICS" << std::endl;
 
-    ret = rsmi_dev_power_ave_get(i, 0, &val_ui64);
+    ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
     CHK_RSMI_PERM_RET(ret)
     std::cout << "\t**Averge Power Usage: ";
     std::cout << static_cast<float>(val_ui64)/1000 << " W" << std::endl;
