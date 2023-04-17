@@ -43,7 +43,7 @@ using namespace std::chrono;
 #define CHK_RSMI_RET_I(RET) { \
   PRINT_RSMI_ERR(RET) \
   if (RET != RSMI_STATUS_SUCCESS) { \
-    return static_cast<int>(RET); \
+    return static_cast<void* >(RET); \
   } \
 }
 
@@ -169,7 +169,7 @@ void* powerCheck(void *args)
     val2_ui64 = 0;
 
     ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
-    // CHK_RSMI_PERM_RET(ret)
+    CHK_RSMI_PERM_RET(ret)
     std::cout << "\t**Averge Power Usage: ";
     std::cout << static_cast<float>(val_ui64)/1000 << " W" << std::endl;
 
