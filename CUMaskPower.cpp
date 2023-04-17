@@ -157,19 +157,19 @@ struct powerArgs {
     int arg_mask2;
 };
 
-int* powerCheck(void *args)
+int powerCheck(void *args)
 {
     struct powerArgs *inputArgs = (struct powerArgs*) args;
     int mask1 = inputArgs->arg_mask1;
     int mask2 = inputArgs->arg_mask2;
 
-    rsmi_status_t ret;
-    uint64_t val_ui64, val2_ui64;
+    // rsmi_status_t ret;
+    // uint64_t val_ui64, val2_ui64;
 
-    ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
-    CHK_RSMI_PERM_RET(ret)
-    std::cout << "\t**Averge Power Usage: ";
-    std::cout << static_cast<float>(val_ui64)/1000 << " W" << std::endl;
+    // ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
+    // CHK_RSMI_PERM_RET(ret)
+    // std::cout << "\t**Averge Power Usage: ";
+    // std::cout << static_cast<float>(val_ui64)/1000 << " W" << std::endl;
 
     return NULL;
 }
@@ -368,6 +368,15 @@ int main(int argc, char **argv)
         // pthread_exit(NULL);
         free(mainThread);
         free(powerThread);
+
+        rsmi_status_t ret;
+        uint64_t val_ui64, val2_ui64;
+
+        ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
+        CHK_RSMI_PERM_RET(ret)
+        std::cout << "\t**Averge Power Usage: ";
+        std::cout << static_cast<float>(val_ui64)/1000 << " W" << std::endl;
+
 
         if (firstMask <= 32)
         {
