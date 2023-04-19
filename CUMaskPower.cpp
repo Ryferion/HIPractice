@@ -10,7 +10,7 @@
 
 #define __HIP_PLATFORM_HCC__
 #define DEVICE_NUM 0
-#define TILE_SIZE 16
+#define TILE_SIZE 1
 
 using namespace std;
 using namespace std::chrono;
@@ -260,6 +260,9 @@ void* hip(void *args)
     uint32_t CUMask[2];
     const uint32_t CUMask_size = 2;
 
+    uint32_t CUMaskMax[2];
+    CUMaskMax[0] = 0xffffffff;
+    CUMaskMax[1] = 0xffffffff;
     // just in case i stupidly put mask as 0
     {
         CUMask[0] = 0x00000001;
@@ -307,7 +310,7 @@ void* hip(void *args)
 
     // copy data from host to device using stream...
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, CUMask)); 
-    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, CUMask)); 
+    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, CUMaskMax)); 
 
     // start timer: gear it towards kernel stuff
     auto start = high_resolution_clock::now();
