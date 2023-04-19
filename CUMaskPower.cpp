@@ -220,7 +220,7 @@ void* powerCheck(void *args)
     ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
     // CHK_RSMI_PERM_RET(ret)
     std::cout << "\t**Averge Power Usage: ";
-    std::cout << static_cast<float>(val_ui64)/1000 << " W" << std::endl;
+    std::cout << static_cast<float>(val_ui64)/1000000 << " W" << std::endl;
     std::cout << "\t=======" << std::endl;
 
     if (status == 2)
@@ -266,7 +266,7 @@ void* hip(void *args)
     // just in case i stupidly put mask as 0
     {
         CUMask[0] = 0x00000001;
-        CUMask[1] = 0x00000001; 
+        CUMask[1] = 0x00000000; 
     }
     if (mask1 <= 0xffffffff)
     {   
@@ -346,7 +346,7 @@ void* hip(void *args)
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
     cout << "Time taken by function: " << duration.count() << " microseconds." << endl;
-    cout << "Current CU mask " << std::bitset<32>(CUMask[0]) << std::bitset<32>(CUMask[1]) <<  endl;
+    cout << "Current CU mask " << std::bitset<32>(CUMask[1]) << std::bitset<32>(CUMask[0]) <<  endl;
 
     pthread_t pthread_id3;
     struct powerArgs *powerThreadAfter = (struct powerArgs *) malloc(sizeof(struct powerArgs));
@@ -429,7 +429,7 @@ int main(int argc, char **argv)
     int firstMask, secondMask;
 
     firstMask = 1;
-    secondMask = 1;
+    secondMask = 0;
 
     for (int iter = 0; iter < maxIter; iter++)
     {
