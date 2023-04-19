@@ -316,9 +316,12 @@ void* hip(void *args)
     HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMemory));
 
     // set up block dim and thread dim
-    dim3 blocks(col / TILE_SIZE + 1, row / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
-    dim3 threads(TILE_SIZE, TILE_SIZE, 1); // 3D dimensions of a block of threads
+    dim3 blocks(col / 1 + 1, row / 1 + 1, 1); // 3D dimensions of the grid of blocks
+    dim3 threads(2, 2, 1); // 3D dimensions of a block of threads
 
+    // dim3 blocks(col / TILE_SIZE + 1, row / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
+    // dim3 threads(TILE_SIZE, TILE_SIZE, 1); // 3D dimensions of a block of threads
+    
     // // power thread launch right before kernel launch
     // pthread_t pthread_id2;
     // struct powerArgs *powerThreadBefore = (struct powerArgs *) malloc(sizeof(struct powerArgs));
