@@ -337,8 +337,8 @@ void* hip(void *args)
 
     // HIP_CHECK(hipGetLastError());
 
-    HIP_CHECK(hipStreamSynchronize(streamMultiply));
-    HIP_CHECK(hipStreamSynchronize(streamMemory));
+    // HIP_CHECK(hipStreamSynchronize(streamMultiply));
+    // HIP_CHECK(hipStreamSynchronize(streamMemory));
 
     // copy matrix data from device to host
     HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
