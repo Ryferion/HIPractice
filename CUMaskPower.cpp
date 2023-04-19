@@ -309,8 +309,7 @@ void* hip(void *args)
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, CUMask)); 
     // HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, CUMask)); 
 
-    // start timer: gear it towards kernel stuff
-    auto start = high_resolution_clock::now();
+
 
     HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMultiply));
     HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMultiply));
@@ -327,18 +326,10 @@ void* hip(void *args)
     // powerThreadBefore->arg_status = 1;
     // pthread_create(&pthread_id2, NULL, powerCheck, (void *)powerThreadBefore);
     
-    
+    // start timer: gear it towards kernel stuff
+    auto start = high_resolution_clock::now();
     // launch kernel
     hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);
-
-
-    HIP_CHECK(hipGetLastError());
-
-    HIP_CHECK(hipStreamSynchronize(streamMultiply));
-    
-    // copy matrix data from device to host
-    HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMultiply)); // host waits for kernel to finish here since hipMemcpy is blocking
-
 
     // end timer
     auto stop = high_resolution_clock::now();
@@ -351,6 +342,16 @@ void* hip(void *args)
     powerThreadAfter->arg_mask2 = mask2;
     powerThreadAfter->arg_status = 2;
     pthread_create(&pthread_id3, NULL, powerCheck, (void *)powerThreadAfter);
+
+    HIP_CHECK(hipGetLastError());
+
+    HIP_CHECK(hipStreamSynchronize(streamMultiply));
+    
+    // copy matrix data from device to host
+    HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMultiply)); // host waits for kernel to finish here since hipMemcpy is blocking
+
+
+   
 
     // pthread_join(pthread_id2, NULL);
     // free(powerThreadBefore);
