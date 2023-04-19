@@ -244,7 +244,6 @@ struct hipArgs {
 
 void* hip(void *args)
 {
-    
     struct hipArgs *inputArgs = (struct hipArgs*) args;
     int mask1 = inputArgs->arg_mask1;
     int mask2 = inputArgs->arg_mask2;
@@ -255,14 +254,6 @@ void* hip(void *args)
     string matrixTwo = inputArgs->arg_secondMatrix;
     string matrixThree = inputArgs->arg_thirdMatrix;
     
-    // power thread launch right before kernel launch
-    pthread_t pthread_id2;
-    struct powerArgs *powerThreadBefore = (struct powerArgs *) malloc(sizeof(struct powerArgs));
-    powerThreadBefore->arg_mask1 = mask1;
-    powerThreadBefore->arg_mask2 = mask2;
-    powerThreadBefore->arg_status = 1;
-    pthread_create(&pthread_id2, NULL, powerCheck, (void *)powerThreadBefore);
-
     int iter = 0;
 
     // memory related variables
@@ -329,7 +320,13 @@ void* hip(void *args)
     auto start = high_resolution_clock::now();
 
 
-
+    // power thread launch right before kernel launch
+    pthread_t pthread_id2;
+    struct powerArgs *powerThreadBefore = (struct powerArgs *) malloc(sizeof(struct powerArgs));
+    powerThreadBefore->arg_mask1 = mask1;
+    powerThreadBefore->arg_mask2 = mask2;
+    powerThreadBefore->arg_status = 1;
+    pthread_create(&pthread_id2, NULL, powerCheck, (void *)powerThreadBefore);
     // launch kernel
     hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);
 
@@ -340,20 +337,6 @@ void* hip(void *args)
     
     // copy matrix data from device to host
     HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
-
-    HIP_CHECK(hipStreamDestroy(streamMultiply));
-    HIP_CHECK(hipStreamDestroy(streamMemory));
-
-    HIP_CHECK(hipFree(A_device)); // free device memory
-    HIP_CHECK(hipFree(B_device)); // free device memory
-    HIP_CHECK(hipFree(C_device)); // free device memory
-    
-    // write to .txt
-    // matrixWrite(row, out, C_host, matrixThree);
-
-    HIP_CHECK(hipHostFree(A_host)); // free pinned memory
-    HIP_CHECK(hipHostFree(B_host)); // free pinned memory
-    HIP_CHECK(hipHostFree(C_host)); // free pinned memory
 
 
     // end timer
@@ -372,6 +355,22 @@ void* hip(void *args)
     pthread_join(pthread_id3, NULL);
     free(powerThreadBefore);
     free(powerThreadAfter);
+
+    HIP_CHECK(hipStreamDestroy(streamMultiply));
+    HIP_CHECK(hipStreamDestroy(streamMemory));
+
+    HIP_CHECK(hipFree(A_device)); // free device memory
+    HIP_CHECK(hipFree(B_device)); // free device memory
+    HIP_CHECK(hipFree(C_device)); // free device memory
+    
+    // write to .txt
+    // matrixWrite(row, out, C_host, matrixThree);
+
+    HIP_CHECK(hipHostFree(A_host)); // free pinned memory
+    HIP_CHECK(hipHostFree(B_host)); // free pinned memory
+    HIP_CHECK(hipHostFree(C_host)); // free pinned memory
+
+
 
 
 
