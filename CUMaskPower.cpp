@@ -265,11 +265,11 @@ void* hip(void *args)
         CUMask[0] = 0x00000001;
         CUMask[1] = 0x00000001; 
     }
-    if (mask1 <= 32)
+    if (mask1 <= 0xffffffff)
     {   
         CUMask[0] = mask1;
     }
-    if (mask2 <= 32)
+    if (mask2 <= 0xffffffff)
     {
         CUMask[1] = mask2; 
     }
