@@ -460,7 +460,7 @@ int main(int argc, char **argv)
         {
             firstMask*2 + 1;
         }
-        else if (iter < 64) && (iter >= 32)
+        else if ((iter < 64) && (iter >= 32))
         {
             secondMask*2 + 1;
         }
