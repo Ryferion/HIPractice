@@ -456,11 +456,11 @@ int main(int argc, char **argv)
         free(mainThread);
         // free(powerThread);
 
-        if (firstMask <= 4294967295)
+        if (iter < 32)
         {
             firstMask*2 + 1;
         }
-        else if (secondMask <= 4294967295)
+        else if (iter < 64) && (iter >= 32)
         {
             secondMask*2 + 1;
         }
@@ -468,7 +468,7 @@ int main(int argc, char **argv)
         {
             std::cout << "Maximum mask reached\n";
         }
-        std::cout << std::bitset<32>(firstMask) << std::bitset<32>(secondMask) <<  endl;
+
     }
     
     return 0;
