@@ -273,8 +273,8 @@ void* hip(void *args)
     // power thread launch right before kernel launch
     pthread_t pthread_id2;
     struct powerArgs *powerThread = (struct powerArgs *) malloc(sizeof(struct powerArgs));
-    powerThread->arg_mask1 = firstMask;
-    powerThread->arg_mask2 = secondMask;
+    powerThread->arg_mask1 = mask1;
+    powerThread->arg_mask2 = mask2;
     pthread_create(&pthread_id2, NULL, powerCheck, (void *)powerThread);
     // launch kernel
     hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);
