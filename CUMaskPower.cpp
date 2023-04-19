@@ -286,7 +286,7 @@ void* hip(void *args)
     
     // create streams
     hipStream_t streamMultiply;
-    // hipStream_t streamMemory;
+    hipStream_t streamMemory;
 
     A_size = row * col;
     B_size = col * out;
