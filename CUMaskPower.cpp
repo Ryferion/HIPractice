@@ -173,21 +173,54 @@ void* powerCheck(void *args)
     // CHK_RSMI_RET_I(ret)
     ret = rsmi_dev_gpu_metrics_info_get(DEVICE_NUM, &p);
     // CHK_RSMI_RET(ret)
-    std::cout << "\t**GPU METRICS" << std::endl;
+    
 
-    ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
-    // CHK_RSMI_PERM_RET(ret)
     if (status == 1) 
     {
-        std::cout << "\t**Averge Power Usage Before Kernel: ";
+        std::cout << "\t**GPU METRICS BEFORE KERNEL" << std::endl;    
     }
     if (status == 2)
     {
-        std::cout << "\t**Averge Power Usage After Kernel: ";
+        std::cout << "\t**GPU METRICS AFTER KERNEL" << std::endl;
     }
+
+    ret = rsmi_dev_temp_metric_get(i, 0, RSMI_TEMP_CURRENT, &val_i64);
+    // CHK_RSMI_RET_I(ret)
+    std::cout << "\t**Temperature: " << val_i64/1000 << "C" << std::endl;
+
+    ret = rsmi_dev_volt_metric_get(i, RSMI_VOLT_TYPE_VDDGFX,
+                                               RSMI_VOLT_CURRENT, &val_i64);
+    // CHK_RSMI_RET_I(ret)
+    std::cout << "\t**Voltage: " << val_i64 << "mV" << std::endl;
+
+    ret = rsmi_dev_fan_speed_get(i, 0, &val_i64);
+    // CHK_RSMI_RET_I(ret)
+    ret = rsmi_dev_fan_speed_max_get(i, 0, &val_ui64);
+    // CHK_RSMI_RET_I(ret)
+    std::cout << "\t**Current Fan Speed: ";
+    std::cout << val_i64/static_cast<int64_t>(val_ui64)*100;
+    std::cout << "% ("<< val_i64 << "/" << val_ui64 << ")" << std::endl;
+
+    ret = rsmi_dev_fan_rpms_get(i, 0, &val_i64);
+    // CHK_RSMI_RET_I(ret)
+    std::cout << "\t**Current fan RPMs: " << val_i64 << std::endl;
+
+    ret = rsmi_dev_power_cap_get(i, 0, &val_ui64);
+    // CHK_RSMI_PERM_RET(ret)
+    std::cout << "\t**Current Power Cap: " << val_ui64 << "uW" <<std::endl;
+
+    ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
+    // CHK_RSMI_PERM_RET(ret)
+    std::cout << "\t**Averge Power Usage: ";
     
     std::cout << static_cast<float>(val_ui64)/1000 << " W" << std::endl;
     std::cout << "\t=======" << std::endl;
+
+    if (status == 2)
+    {
+        std::cout << "\n\n";
+    }
+    
     return NULL;
 }
 
