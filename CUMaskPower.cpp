@@ -289,18 +289,17 @@ void* hip(void *args)
     B_size = col * out;
     C_size = row * out;
     
-
-       // start timer: gear it towards kernel stuff
-    auto start = high_resolution_clock::now();
+    // allocate host memory
+    HIP_CHECK(hipHostMalloc((void**) &A_host, sizeof(float) * A_size));
+    HIP_CHECK(hipHostMalloc((void**) &B_host, sizeof(float) * B_size));
+    HIP_CHECK(hipHostMalloc((void**) &C_host, sizeof(float) * C_size));
     
     // fill host matrices with stuff from text files
     matrixRead(matrixOne, A_host, A_size);
     matrixRead(matrixTwo, B_host, B_size);
 
-    // allocate host memory
-    HIP_CHECK(hipHostMalloc((void**) &A_host, sizeof(float) * A_size));
-    HIP_CHECK(hipHostMalloc((void**) &B_host, sizeof(float) * B_size));
-    HIP_CHECK(hipHostMalloc((void**) &C_host, sizeof(float) * C_size));
+    // start timer: gear it towards kernel stuff
+    auto start = high_resolution_clock::now();
 
     // allocate memory for device
     HIP_CHECK(hipMalloc((void**) &A_device, sizeof(float) * A_size));
@@ -310,6 +309,8 @@ void* hip(void *args)
     // copy data from host to device using stream...
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, CUMask)); 
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, CUMask)); 
+
+
 
     HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));
     HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMemory));
