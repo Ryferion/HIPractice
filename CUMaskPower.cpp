@@ -244,14 +244,7 @@ struct hipArgs {
 
 void* hip(void *args)
 {
-    // power thread launch right before kernel launch
-    pthread_t pthread_id2;
-    struct powerArgs *powerThreadBefore = (struct powerArgs *) malloc(sizeof(struct powerArgs));
-    powerThreadBefore->arg_mask1 = mask1;
-    powerThreadBefore->arg_mask2 = mask2;
-    powerThreadBefore->arg_status = 1;
-    pthread_create(&pthread_id2, NULL, powerCheck, (void *)powerThreadBefore);
-
+    
     struct hipArgs *inputArgs = (struct hipArgs*) args;
     int mask1 = inputArgs->arg_mask1;
     int mask2 = inputArgs->arg_mask2;
@@ -262,6 +255,14 @@ void* hip(void *args)
     string matrixTwo = inputArgs->arg_secondMatrix;
     string matrixThree = inputArgs->arg_thirdMatrix;
     
+    // power thread launch right before kernel launch
+    pthread_t pthread_id2;
+    struct powerArgs *powerThreadBefore = (struct powerArgs *) malloc(sizeof(struct powerArgs));
+    powerThreadBefore->arg_mask1 = mask1;
+    powerThreadBefore->arg_mask2 = mask2;
+    powerThreadBefore->arg_status = 1;
+    pthread_create(&pthread_id2, NULL, powerCheck, (void *)powerThreadBefore);
+
     int iter = 0;
 
     // memory related variables
