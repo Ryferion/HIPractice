@@ -342,7 +342,7 @@ void* hip(void *args)
     // end timer
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by function: " << duration.count() << " microseconds, with CU mask " << std::bitset<30>(CUMask[0]) << std::bitset<30>(CUMask[1]) <<  endl;
+    cout << "Time taken by function: " << duration.count() << " microseconds, with CU mask " << std::bitset<32>(CUMask[0]) << std::bitset<32>(CUMask[1]) <<  endl;
 
     pthread_t pthread_id3;
     struct powerArgs *powerThreadAfter = (struct powerArgs *) malloc(sizeof(struct powerArgs));
@@ -456,11 +456,11 @@ int main(int argc, char **argv)
         free(mainThread);
         // free(powerThread);
 
-        if (firstMask <= 32)
+        if (firstMask <= 4294967295)
         {
             firstMask*2 + 1;
         }
-        else if (secondMask <= 32)
+        else if (secondMask <= 4294967295)
         {
             secondMask*2 + 1;
         }
