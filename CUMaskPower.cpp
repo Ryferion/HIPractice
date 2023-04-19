@@ -10,7 +10,7 @@
 
 #define __HIP_PLATFORM_HCC__
 #define DEVICE_NUM 0
-#define TILE_SIZE 1
+#define TILE_SIZE 8
 
 using namespace std;
 using namespace std::chrono;
@@ -312,8 +312,8 @@ void* hip(void *args)
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, CUMask)); 
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, CUMask)); 
 
-    // start timer: gear it towards kernel stuff
-    auto start = high_resolution_clock::now();
+    // // start timer: gear it towards kernel stuff
+    // auto start = high_resolution_clock::now();
 
     HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));
     HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMemory));
@@ -342,10 +342,10 @@ void* hip(void *args)
     // copy matrix data from device to host
     HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
 
-    // end timer
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by function: " << duration.count() << " microseconds, with CU mask " << std::bitset<32>(CUMask[0]) << std::bitset<32>(CUMask[1]) <<  endl;
+    // // end timer
+    // auto stop = high_resolution_clock::now();
+    // auto duration = duration_cast<microseconds>(stop - start);
+    // cout << "Time taken by function: " << duration.count() << " microseconds, with CU mask " << std::bitset<32>(CUMask[0]) << std::bitset<32>(CUMask[1]) <<  endl;
 
     pthread_t pthread_id3;
     struct powerArgs *powerThreadAfter = (struct powerArgs *) malloc(sizeof(struct powerArgs));
