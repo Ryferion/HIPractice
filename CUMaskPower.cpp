@@ -458,11 +458,11 @@ int main(int argc, char **argv)
 
         if (iter < 32)
         {
-            firstMask*2 + 1;
+            firstMask = firstMask*2 + 1;
         }
         else if ((iter < 64) && (iter >= 32))
         {
-            secondMask*2 + 1;
+            secondMask = secondMask*2 + 1;
         }
         else
         {
