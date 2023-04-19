@@ -269,8 +269,18 @@ void* hip(void *args)
     // start timer: gear it towards kernel stuff
     auto start = high_resolution_clock::now();
 
+
+    // power thread launch right before kernel launch
+    pthread_t pthread_id2;
+    struct powerArgs *powerThread = (struct powerArgs *) malloc(sizeof(struct powerArgs));
+    powerThread->arg_mask1 = firstMask;
+    powerThread->arg_mask2 = secondMask;
+    pthread_create(&pthread_id2, NULL, powerCheck, (void *)powerThread);
     // launch kernel
     hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);
+    
+    free(powerThread);
+
 
     HIP_CHECK(hipGetLastError());
 
@@ -363,19 +373,22 @@ int main(int argc, char **argv)
         mainThread->arg_secondMatrix = matrixTwo;
         mainThread->arg_thirdMatrix = matrixThree;
 
-        // power thread
-        pthread_t pthread_id2;
-        struct powerArgs *powerThread = (struct powerArgs *) malloc(sizeof(struct powerArgs));
-        powerThread->arg_mask1 = firstMask;
-        powerThread->arg_mask2 = secondMask;
+        // // power thread
+        // pthread_t pthread_id2;
+        // struct powerArgs *powerThread = (struct powerArgs *) malloc(sizeof(struct powerArgs));
+        // powerThread->arg_mask1 = firstMask;
+        // powerThread->arg_mask2 = secondMask;
 
         pthread_create(&pthread_id, NULL, &hip, (void *)mainThread);
-        pthread_create(&pthread_id2, NULL, powerCheck, (void *)powerThread);
+        // pthread_create(&pthread_id2, NULL, powerCheck, (void *)powerThread);
+
+        // wait for both threads to finish
         pthread_join(pthread_id, NULL);
-        pthread_join(pthread_id2, NULL);
+        // pthread_join(pthread_id2, NULL);
+
         // pthread_exit(NULL);
         free(mainThread);
-        free(powerThread);
+        // free(powerThread);
 
         if (firstMask <= 32)
         {
@@ -387,7 +400,7 @@ int main(int argc, char **argv)
         }
         else
         {
-            std::cout << "Maximum iterations reached\n";
+            std::cout << "Maximum mask reached\n";
         }
     }
     
