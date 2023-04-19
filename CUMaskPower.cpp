@@ -458,11 +458,11 @@ int main(int argc, char **argv)
 
         if (firstMask <= 32)
         {
-            firstMask++;
+            firstMask*2 + 1;
         }
         else if (secondMask <= 32)
         {
-            secondMask++;
+            secondMask*2 + 1;
         }
         else
         {
