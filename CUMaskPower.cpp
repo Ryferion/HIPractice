@@ -468,7 +468,7 @@ int main(int argc, char **argv)
         {
             std::cout << "Maximum mask reached\n";
         }
-
+        std::cout << iter << " " << std::bitset<32>(firstMask) << std::bitset<32>(secondMask) <<  endl;
     }
     
     return 0;
