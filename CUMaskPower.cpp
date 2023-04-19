@@ -351,9 +351,10 @@ void* hip(void *args)
     powerThreadAfter->arg_status = 2;
     pthread_create(&pthread_id3, NULL, powerCheck, (void *)powerThreadAfter);
 
-    pthread_join(pthread_id2, NULL);
+    // pthread_join(pthread_id2, NULL);
+    // free(powerThreadBefore);
+    
     pthread_join(pthread_id3, NULL);
-    free(powerThreadBefore);
     free(powerThreadAfter);
 
     HIP_CHECK(hipStreamDestroy(streamMultiply));
