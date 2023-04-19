@@ -330,6 +330,23 @@ void* hip(void *args)
     // launch kernel
     hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);
 
+    // end timer
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cout << "Time taken by function: " << duration.count() << " microseconds, with CU mask " << std::bitset<30>(CUMask[0]) << std::bitset<30>(CUMask[1]) <<  endl;
+
+    pthread_t pthread_id3;
+    struct powerArgs *powerThreadAfter = (struct powerArgs *) malloc(sizeof(struct powerArgs));
+    powerThreadAfter->arg_mask1 = mask1;
+    powerThreadAfter->arg_mask2 = mask2;
+    powerThreadAfter->arg_status = 2;
+    pthread_create(&pthread_id3, NULL, powerCheck, (void *)powerThreadAfter);
+
+    pthread_join(pthread_id2, NULL);
+    pthread_join(pthread_id3, NULL);
+    free(powerThreadBefore);
+    free(powerThreadAfter);
+
     HIP_CHECK(hipGetLastError());
 
     HIP_CHECK(hipStreamSynchronize(streamMemory));
@@ -351,22 +368,9 @@ void* hip(void *args)
     HIP_CHECK(hipHostFree(B_host)); // free pinned memory
     HIP_CHECK(hipHostFree(C_host)); // free pinned memory
 
-    // end timer
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by function: " << duration.count() << " microseconds, with CU mask " << std::bitset<30>(CUMask[0]) << std::bitset<30>(CUMask[1]) <<  endl;
 
-    pthread_t pthread_id3;
-    struct powerArgs *powerThreadAfter = (struct powerArgs *) malloc(sizeof(struct powerArgs));
-    powerThreadAfter->arg_mask1 = mask1;
-    powerThreadAfter->arg_mask2 = mask2;
-    powerThreadAfter->arg_status = 2;
-    pthread_create(&pthread_id3, NULL, powerCheck, (void *)powerThreadAfter);
 
-    pthread_join(pthread_id2, NULL);
-    pthread_join(pthread_id3, NULL);
-    free(powerThreadBefore);
-    free(powerThreadAfter);
+
 
     return NULL;
 }
