@@ -155,6 +155,7 @@ void matrixRead(string fileName, float *readTo, int size)
 struct powerArgs {
     int arg_mask1;
     int arg_mask2;
+    int arg_status;
 };
 
 void* powerCheck(void *args)
@@ -162,6 +163,7 @@ void* powerCheck(void *args)
     struct powerArgs *inputArgs = (struct powerArgs*) args;
     int mask1 = inputArgs->arg_mask1;
     int mask2 = inputArgs->arg_mask2;
+    int status = inputArgs->arg_status;
 
     rsmi_status_t ret;
     uint64_t val_ui64, val2_ui64;
@@ -175,7 +177,15 @@ void* powerCheck(void *args)
 
     ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
     // CHK_RSMI_PERM_RET(ret)
-    std::cout << "\t**Averge Power Usage: ";
+    if (status == 1) 
+    {
+        std::cout << "\t**Averge Power Usage Before Kernel: ";
+    }
+    if (status == 2)
+    {
+        std::cout << "\t**Averge Power Usage After Kernel: ";
+    }
+    
     std::cout << static_cast<float>(val_ui64)/1000 << " W" << std::endl;
     std::cout << "\t=======" << std::endl;
     return NULL;
@@ -275,19 +285,10 @@ void* hip(void *args)
     struct powerArgs *powerThreadBefore = (struct powerArgs *) malloc(sizeof(struct powerArgs));
     powerThreadBefore->arg_mask1 = mask1;
     powerThreadBefore->arg_mask2 = mask2;
+    powerThreadBefore->arg_status = 1;
     pthread_create(&pthread_id2, NULL, powerCheck, (void *)powerThreadBefore);
     // launch kernel
     hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);
-    
-    pthread_t pthread_id3;
-    struct powerArgs *powerThreadAfter = (struct powerArgs *) malloc(sizeof(struct powerArgs));
-    powerThreadAfter->arg_mask1 = mask1;
-    powerThreadAfter->arg_mask2 = mask2;
-    pthread_create(&pthread_id3, NULL, powerCheck, (void *)powerThreadAfter);
-
-    free(powerThreadBefore);
-    free(powerThreadAfter);
-
 
     HIP_CHECK(hipGetLastError());
 
@@ -314,6 +315,18 @@ void* hip(void *args)
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
     cout << "Time taken by function: " << duration.count() << " microseconds, with CU mask " << std::bitset<30>(CUMask[0]) << std::bitset<30>(CUMask[1]) <<  endl;
+
+    pthread_t pthread_id3;
+    struct powerArgs *powerThreadAfter = (struct powerArgs *) malloc(sizeof(struct powerArgs));
+    powerThreadAfter->arg_mask1 = mask1;
+    powerThreadAfter->arg_mask2 = mask2;
+    powerThreadAfter->arg_status = 2;
+    pthread_create(&pthread_id3, NULL, powerCheck, (void *)powerThreadAfter);
+
+    pthread_join(pthread_id2, NULL);
+    pthread_join(pthread_id3, NULL);
+    free(powerThreadBefore);
+    free(powerThreadAfter);
 
     return NULL;
 }
