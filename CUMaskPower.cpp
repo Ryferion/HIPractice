@@ -196,26 +196,26 @@ void* powerCheck(void *args)
     // CHK_RSMI_RET_I(ret)
     std::cout << "\t**Temperature: " << val_i64/1000 << "C" << std::endl;
 
-    ret = rsmi_dev_volt_metric_get(DEVICE_NUM, RSMI_VOLT_TYPE_VDDGFX,
-                                               RSMI_VOLT_CURRENT, &val_i64);
-    // CHK_RSMI_RET_I(ret)
-    std::cout << "\t**Voltage: " << val_i64 << "mV" << std::endl;
+    // ret = rsmi_dev_volt_metric_get(DEVICE_NUM, RSMI_VOLT_TYPE_VDDGFX,
+    //                                            RSMI_VOLT_CURRENT, &val_i64);
+    // // CHK_RSMI_RET_I(ret)
+    // std::cout << "\t**Voltage: " << val_i64 << "mV" << std::endl;
 
-    ret = rsmi_dev_fan_speed_get(DEVICE_NUM, 0, &val_i64);
-    // CHK_RSMI_RET_I(ret)
-    ret = rsmi_dev_fan_speed_max_get(DEVICE_NUM, 0, &val_ui64);
-    // CHK_RSMI_RET_I(ret)
-    std::cout << "\t**Current Fan Speed: ";
-    std::cout << val_i64/static_cast<int64_t>(val_ui64)*100;
-    std::cout << "% ("<< val_i64 << "/" << val_ui64 << ")" << std::endl;
+    // ret = rsmi_dev_fan_speed_get(DEVICE_NUM, 0, &val_i64);
+    // // CHK_RSMI_RET_I(ret)
+    // ret = rsmi_dev_fan_speed_max_get(DEVICE_NUM, 0, &val_ui64);
+    // // CHK_RSMI_RET_I(ret)
+    // std::cout << "\t**Current Fan Speed: ";
+    // std::cout << val_i64/static_cast<int64_t>(val_ui64)*100;
+    // std::cout << "% ("<< val_i64 << "/" << val_ui64 << ")" << std::endl;
 
-    ret = rsmi_dev_fan_rpms_get(DEVICE_NUM, 0, &val_i64);
-    // CHK_RSMI_RET_I(ret)
-    std::cout << "\t**Current fan RPMs: " << val_i64 << std::endl;
+    // ret = rsmi_dev_fan_rpms_get(DEVICE_NUM, 0, &val_i64);
+    // // CHK_RSMI_RET_I(ret)
+    // std::cout << "\t**Current fan RPMs: " << val_i64 << std::endl;
 
-    ret = rsmi_dev_power_cap_get(DEVICE_NUM, 0, &val_ui64);
-    // CHK_RSMI_PERM_RET(ret)
-    std::cout << "\t**Current Power Cap: " << val_ui64 << "uW" <<std::endl;
+    // ret = rsmi_dev_power_cap_get(DEVICE_NUM, 0, &val_ui64);
+    // // CHK_RSMI_PERM_RET(ret)
+    // std::cout << "\t**Current Power Cap: " << val_ui64 << "uW" <<std::endl;
 
     ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
     // CHK_RSMI_PERM_RET(ret)
@@ -320,13 +320,13 @@ void* hip(void *args)
     auto start = high_resolution_clock::now();
 
 
-    // power thread launch right before kernel launch
-    pthread_t pthread_id2;
-    struct powerArgs *powerThreadBefore = (struct powerArgs *) malloc(sizeof(struct powerArgs));
-    powerThreadBefore->arg_mask1 = mask1;
-    powerThreadBefore->arg_mask2 = mask2;
-    powerThreadBefore->arg_status = 1;
-    pthread_create(&pthread_id2, NULL, powerCheck, (void *)powerThreadBefore);
+    // // power thread launch right before kernel launch
+    // pthread_t pthread_id2;
+    // struct powerArgs *powerThreadBefore = (struct powerArgs *) malloc(sizeof(struct powerArgs));
+    // powerThreadBefore->arg_mask1 = mask1;
+    // powerThreadBefore->arg_mask2 = mask2;
+    // powerThreadBefore->arg_status = 1;
+    // pthread_create(&pthread_id2, NULL, powerCheck, (void *)powerThreadBefore);
     // launch kernel
     hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);
 
