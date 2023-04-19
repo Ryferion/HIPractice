@@ -166,7 +166,15 @@ void* powerCheck(void *args)
     int status = inputArgs->arg_status;
 
     rsmi_status_t ret;
+    std::string val_str;
+    std::vector<std::string> val_vec;
     uint64_t val_ui64, val2_ui64;
+    int64_t val_i64;
+    uint32_t val_ui32;
+    uint16_t val_ui16;
+    rsmi_dev_perf_level_t pfl;
+    rsmi_frequencies_t f;
+    uint32_t num_monitor_devs = 0;
     rsmi_gpu_metrics_t p;
 
     ret = rsmi_init(0);
@@ -212,7 +220,6 @@ void* powerCheck(void *args)
     ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
     // CHK_RSMI_PERM_RET(ret)
     std::cout << "\t**Averge Power Usage: ";
-    
     std::cout << static_cast<float>(val_ui64)/1000 << " W" << std::endl;
     std::cout << "\t=======" << std::endl;
 
