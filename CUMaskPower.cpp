@@ -185,16 +185,16 @@ void* powerCheck(void *args)
 
     if (status == 1) 
     {
-        std::cout << "\t**GPU METRICS BEFORE KERNEL" << std::endl;    
+        // std::cout << "\t**GPU METRICS BEFORE KERNEL" << std::endl;    
     }
     if (status == 2)
     {
-        std::cout << "\t**GPU METRICS AFTER KERNEL" << std::endl;
+        // std::cout << "\t**GPU METRICS AFTER KERNEL" << std::endl;
     }
 
     ret = rsmi_dev_temp_metric_get(DEVICE_NUM, 0, RSMI_TEMP_CURRENT, &val_i64);
     // CHK_RSMI_RET_I(ret)
-    std::cout << "\t**Temperature: " << val_i64/1000 << "C" << std::endl;
+    std::cout << "Temperature: " << val_i64/1000 << "C" << std::endl;
 
     // ret = rsmi_dev_volt_metric_get(DEVICE_NUM, RSMI_VOLT_TYPE_VDDGFX,
     //                                            RSMI_VOLT_CURRENT, &val_i64);
@@ -219,13 +219,12 @@ void* powerCheck(void *args)
 
     ret = rsmi_dev_power_ave_get(DEVICE_NUM, 0, &val_ui64);
     // CHK_RSMI_PERM_RET(ret)
-    std::cout << "\t**Averge Power Usage: ";
-    std::cout << static_cast<float>(val_ui64)/1000000 << " W" << std::endl;
-    std::cout << "\t=======" << std::endl;
+    std::cout << "Average Power Usage: " << static_cast<float>(val_ui64)/1000000 << " W" << std::endl;
+    // std::cout << "\t=======" << std::endl;
 
     if (status == 2)
     {
-        std::cout << "\n\n";
+        std::cout << "\n";
     }
     
     return NULL;
@@ -336,14 +335,15 @@ void* hip(void *args)
     hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);    
 
     // HIP_CHECK(hipGetLastError());
-
+    
+    // wait for stream to finish 
     HIP_CHECK(hipStreamSynchronize(streamMultiply));
 
     // // end timer
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken by function: " << duration.count() << " microseconds." << endl;
-    cout << "Current CU mask " << std::bitset<32>(CUMask[1]) << std::bitset<32>(CUMask[0]) <<  endl;
+    cout << "Time taken: " << duration.count() << " microseconds. ";
+    cout << "CU mask " << std::bitset<32>(CUMask[1]) << std::bitset<32>(CUMask[0]) <<  endl;
 
     pthread_t pthread_id3;
     struct powerArgs *powerThreadAfter = (struct powerArgs *) malloc(sizeof(struct powerArgs));
@@ -351,14 +351,10 @@ void* hip(void *args)
     powerThreadAfter->arg_mask2 = mask2;
     powerThreadAfter->arg_status = 2;
     pthread_create(&pthread_id3, NULL, powerCheck, (void *)powerThreadAfter);
-
-
+    
     HIP_CHECK(hipStreamSynchronize(streamMemory));
     // copy matrix data from device to host
     HIP_CHECK(hipMemcpyAsync(C_host, C_device, sizeof(float) * C_size, hipMemcpyDeviceToHost, streamMemory)); // host waits for kernel to finish here since hipMemcpy is blocking
-
-    
-   
 
     // pthread_join(pthread_id2, NULL);
     // free(powerThreadBefore);
@@ -379,11 +375,7 @@ void* hip(void *args)
     HIP_CHECK(hipHostFree(A_host)); // free pinned memory
     HIP_CHECK(hipHostFree(B_host)); // free pinned memory
     HIP_CHECK(hipHostFree(C_host)); // free pinned memory
-
-
-
-
-
+    
     return NULL;
 }
 
