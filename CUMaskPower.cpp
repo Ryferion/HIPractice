@@ -359,8 +359,8 @@ void* hip(void *args)
     // pthread_join(pthread_id2, NULL);
     // free(powerThreadBefore);
 
-    pthread_join(pthread_id3, NULL);
-    free(powerThreadAfter);
+    // pthread_join(pthread_id3, NULL);
+    // free(powerThreadAfter);
 
     HIP_CHECK(hipStreamDestroy(streamMultiply));
     HIP_CHECK(hipStreamDestroy(streamMemory));
@@ -461,7 +461,7 @@ int main(int argc, char **argv)
         // end global timer
         auto stop_g = high_resolution_clock::now();
         auto duration = duration_cast<milliseconds>(stop_g - start_g);
-        cout << "Time taken: " << duration.count() << " milliseconds. ";
+        cout << "Global Timer: " << duration.count() << " milliseconds. ";
         // pthread_exit(NULL);
         free(mainThread);
         // free(powerThread);
