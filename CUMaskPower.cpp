@@ -10,7 +10,7 @@
 
 #define __HIP_PLATFORM_HCC__
 #define DEVICE_NUM 0
-#define TILE_SIZE 8
+#define TILE_SIZE 16
 
 using namespace std;
 using namespace std::chrono;
@@ -320,7 +320,7 @@ void* hip(void *args)
     dim3 blocks(col / TILE_SIZE + 1, row / TILE_SIZE + 1, 1); // 3D dimensions of the grid of blocks
     dim3 threads(TILE_SIZE, TILE_SIZE, 1); // 3D dimensions of a block of threads
 
-    // // power thread launch right before kernel launch
+    // power thread launch right before kernel launch
     // pthread_t pthread_id2;
     // struct powerArgs *powerThreadBefore = (struct powerArgs *) malloc(sizeof(struct powerArgs));
     // powerThreadBefore->arg_mask1 = mask1;
@@ -339,18 +339,18 @@ void* hip(void *args)
     // wait for stream to finish 
     HIP_CHECK(hipStreamSynchronize(streamMultiply));
 
-    // // end timer
+    // end timer
     auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-    cout << "Time taken: " << duration.count() << " microseconds. ";
+    auto duration = duration_cast<milliseconds>(stop - start);
+    cout << "Time taken: " << duration.count() << " milliseconds. ";
     cout << "CU mask " << std::bitset<32>(CUMask[1]) << std::bitset<32>(CUMask[0]) <<  endl;
 
-    pthread_t pthread_id3;
-    struct powerArgs *powerThreadAfter = (struct powerArgs *) malloc(sizeof(struct powerArgs));
-    powerThreadAfter->arg_mask1 = mask1;
-    powerThreadAfter->arg_mask2 = mask2;
-    powerThreadAfter->arg_status = 2;
-    pthread_create(&pthread_id3, NULL, powerCheck, (void *)powerThreadAfter);
+    // pthread_t pthread_id3;
+    // struct powerArgs *powerThreadAfter = (struct powerArgs *) malloc(sizeof(struct powerArgs));
+    // powerThreadAfter->arg_mask1 = mask1;
+    // powerThreadAfter->arg_mask2 = mask2;
+    // powerThreadAfter->arg_status = 2;
+    // pthread_create(&pthread_id3, NULL, powerCheck, (void *)powerThreadAfter);
     
     HIP_CHECK(hipStreamSynchronize(streamMemory));
     // copy matrix data from device to host
@@ -447,6 +447,9 @@ int main(int argc, char **argv)
         // powerThread->arg_mask1 = firstMask;
         // powerThread->arg_mask2 = secondMask;
 
+        // start global timer
+        auto start_g = high_resolution_clock::now();
+
         pthread_create(&pthread_id, NULL, &hip, (void *)mainThread);
         // pthread_create(&pthread_id2, NULL, powerCheck, (void *)powerThread);
 
@@ -454,6 +457,11 @@ int main(int argc, char **argv)
         pthread_join(pthread_id, NULL);
         // pthread_join(pthread_id2, NULL);
 
+
+        // end global timer
+        auto stop_g = high_resolution_clock::now();
+        auto duration = duration_cast<milliseconds>(stop_g - start_g);
+        cout << "Time taken: " << duration.count() << " milliseconds. ";
         // pthread_exit(NULL);
         free(mainThread);
         // free(powerThread);
