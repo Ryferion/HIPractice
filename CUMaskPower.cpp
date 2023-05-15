@@ -285,6 +285,7 @@ void* hip(void *args)
     
     // create streams
     hipStream_t streamMultiply;
+    hipStream_t streamMultiply2;
     hipStream_t streamMemory;
 
     A_size = row * col;
@@ -309,9 +310,9 @@ void* hip(void *args)
 
     // copy data from host to device using stream...
     HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply, CUMask_size, CUMask)); 
-    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, CUMask)); 
-
-   
+    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMultiply2, CUMask_size, CUMask)); 
+    
+    HIP_CHECK(hipExtStreamCreateWithCUMask(&streamMemory, CUMask_size, CUMask));    
 
     HIP_CHECK(hipMemcpyAsync(A_device, A_host, sizeof(float) * A_size, hipMemcpyHostToDevice, streamMemory));
     HIP_CHECK(hipMemcpyAsync(B_device, B_host, sizeof(float) * B_size, hipMemcpyHostToDevice, streamMemory));
@@ -333,11 +334,12 @@ void* hip(void *args)
 
     // launch kernel
     hipLaunchKernelGGL(matrixMultiply, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);    
-
+    hipLaunchKernelGGL(matrixMultiply2, blocks, threads, 0, streamMultiply, row, col, out, A_device, B_device, C_device);   
     // HIP_CHECK(hipGetLastError());
     
     // wait for stream to finish 
     HIP_CHECK(hipStreamSynchronize(streamMultiply));
+    HIP_CHECK(hipStreamSynchronize(streamMultiply2));
 
     // end timer
     auto stop = high_resolution_clock::now();
@@ -363,6 +365,8 @@ void* hip(void *args)
     // free(powerThreadAfter);
 
     HIP_CHECK(hipStreamDestroy(streamMultiply));
+    HIP_CHECK(hipStreamDestroy(streamMultiply2));
+    
     HIP_CHECK(hipStreamDestroy(streamMemory));
 
     HIP_CHECK(hipFree(A_device)); // free device memory
